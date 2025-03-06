@@ -1,0 +1,109 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String   @id @default(uuid())
+  name              String   @unique
+  password          String
+  role              Role     @default(DISTRIBUTOR)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  Pacas             Paca[]
+  OrdersTransporter Order[]  @relation(name: "OrdersTransporter")
+  OrdersDistributor Order[]  @relation(name: "OrdersDistributor")
+}
+
+model Paca {
+  id           String         @id @default(uuid())
+  provider     User           @relation(fields: [provider_id], references: [id])
+  provider_id  String
+  name         String
+  description  String
+  weight       Decimal        @db.Decimal(5, 2)
+  price        Decimal        @default(0) @db.Decimal(10, 2)
+  status       Paca_Status    @default(AVAILABLE)
+  img_url      String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  quantity     Int            @default(1)
+  OrderDetails OrderDetails[]
+
+  @@index([status])
+}
+
+model Order {
+  id             String         @id @default(uuid())
+  distributor    User           @relation(name: "OrdersDistributor", fields: [distributor_id], references: [id])
+  distributor_id String
+  transporter    User           @relation(name: "OrdersTransporter", fields: [transporter_id], references: [id])
+  transporter_id String
+  total_price    Decimal        @default(0) @db.Decimal(10, 2)
+  status         Order_Status   @default(PENDING)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  Order_Details  OrderDetails[]
+  Tracking       Tracking[]
+
+  @@index([status])
+}
+
+model OrderDetails {
+  id       String @id @default(uuid())
+  order    Order  @relation(fields: [order_id], references: [id])
+  order_id String
+  paca     Paca   @relation(fields: [paca_id], references: [id])
+  paca_id  String
+  quantity Int    @default(1)
+
+  @@unique([order_id, paca_id])
+}
+
+model Tracking {
+  id        String          @id @default(uuid())
+  order     Order           @relation(fields: [order_id], references: [id])
+  order_id  String
+  timestamp DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  status    Tracking_Status @default(ORIGIN_WAREHOUSE)
+}
+
+enum Role {
+  ADMIN
+  PROVIDER
+  TRANSPORTER
+  DISTRIBUTOR
+}
+
+enum Paca_Status {
+  AVAILABLE
+  SOLD
+  ON_TRANSPORT
+}
+
+enum Order_Status {
+  PENDING
+  CANCELLED
+  READY
+  ON_TRANSPORT
+  ON_WAREHOUSE
+  DELIVERED
+}
+
+enum Tracking_Status {
+  ORIGIN_WAREHOUSE
+  ON_AIRPLANE
+  ON_ADUANAS
+  LOCAL_WAREHOUSE
+}
