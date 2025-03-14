@@ -4,9 +4,6 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -24,10 +21,8 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
-  min-height: 100vh;
+  height: 100vh;
 }
 
 h1 {
@@ -42,27 +37,39 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
   cursor: pointer;
-  transition: border-color 0.25s;
 }
 button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  background-color: #66d3fa;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.msg-window {
+  min-width: 30rem;
+  max-width: 90rem;
+  background-color: #69ace7;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 1rem;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+  color: white;
+  font-family: Arial, sans-serif;
+  border-left: 10px solid #000983;
+}
+
+.msg-window p {
+  margin: 0;
+  padding: 0.8rem;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+.msg-window.error {
+  border-left: 10px solid #940303;
+  background-color: #f64949;
+}
+
+.msg-window.success {
+  width: 100%;
 }
