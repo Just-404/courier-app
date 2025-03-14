@@ -1,10 +1,10 @@
-import { PrismaCliente as prisma } from "../db/prisma";
+const prisma = require("../db/prismaClient").prisma;
 
 class UserModel {
-  async createUser(data) {
+  async createUser(user) {
     return await prisma.user.create({
       data: {
-        ...data,
+        ...user,
       },
     });
   }
@@ -13,6 +13,11 @@ class UserModel {
     return await prisma.user.findMany();
   }
 
+  async findById(id) {
+    return await prisma.user.findUnique({
+      where: { id },
+    });
+  }
   async findByName(name) {
     return await prisma.user.findUnique({
       where: { name },
@@ -20,4 +25,4 @@ class UserModel {
   }
 }
 
-export default new UserModel();
+module.exports = new UserModel();

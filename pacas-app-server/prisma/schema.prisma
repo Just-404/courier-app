@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -20,14 +14,13 @@ model User {
   role              Role     @default(DISTRIBUTOR)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+  OrdersDistributor Order[]  @relation("OrdersDistributor")
+  OrdersTransporter Order[]  @relation("OrdersTransporter")
   Pacas             Paca[]
-  OrdersTransporter Order[]  @relation(name: "OrdersTransporter")
-  OrdersDistributor Order[]  @relation(name: "OrdersDistributor")
 }
 
 model Paca {
   id           String         @id @default(uuid())
-  provider     User           @relation(fields: [provider_id], references: [id])
   provider_id  String
   name         String
   description  String
@@ -39,20 +32,21 @@ model Paca {
   updatedAt    DateTime       @updatedAt
   quantity     Int            @default(1)
   OrderDetails OrderDetails[]
+  provider     User           @relation(fields: [provider_id], references: [id])
 
   @@index([status])
 }
 
 model Order {
   id             String         @id @default(uuid())
-  distributor    User           @relation(name: "OrdersDistributor", fields: [distributor_id], references: [id])
   distributor_id String
-  transporter    User           @relation(name: "OrdersTransporter", fields: [transporter_id], references: [id])
   transporter_id String
   total_price    Decimal        @default(0) @db.Decimal(10, 2)
   status         Order_Status   @default(PENDING)
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
+  distributor    User           @relation("OrdersDistributor", fields: [distributor_id], references: [id])
+  transporter    User           @relation("OrdersTransporter", fields: [transporter_id], references: [id])
   Order_Details  OrderDetails[]
   Tracking       Tracking[]
 
@@ -61,22 +55,30 @@ model Order {
 
 model OrderDetails {
   id       String @id @default(uuid())
-  order    Order  @relation(fields: [order_id], references: [id])
   order_id String
-  paca     Paca   @relation(fields: [paca_id], references: [id])
   paca_id  String
   quantity Int    @default(1)
+  order    Order  @relation(fields: [order_id], references: [id])
+  paca     Paca   @relation(fields: [paca_id], references: [id])
 
   @@unique([order_id, paca_id])
 }
 
 model Tracking {
   id        String          @id @default(uuid())
-  order     Order           @relation(fields: [order_id], references: [id])
   order_id  String
   timestamp DateTime        @default(now())
   updatedAt DateTime        @updatedAt
   status    Tracking_Status @default(ORIGIN_WAREHOUSE)
+  order     Order           @relation(fields: [order_id], references: [id])
+}
+
+model Session {
+  sid    String   @id @map("sid") @db.VarChar
+  sess   Json     @db.Json
+  expire DateTime @db.Timestamp(6)
+
+  @@index([expire], map: "IDX_session_expire")
 }
 
 enum Role {

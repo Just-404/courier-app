@@ -27,4 +27,4 @@ const TrackingStatus = Object.freeze({
   LOCAL_WAREHOUSE: "LOCAL_WAREHOUSE",
 });
 
-export { Role, PacaStatus, OrderStatus, TrackingStatus };
+module.exports = { Role, PacaStatus, OrderStatus, TrackingStatus };
