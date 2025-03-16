@@ -1,6 +1,6 @@
 const Role = Object.freeze({
   ADMIN: "ADMIN",
-  PROVIDER: "USER",
+  PROVIDER: "PROVIDER",
   TRANSPORTER: "TRANSPORTER",
   DISTRIBUTOR: "DISTRIBUTOR",
 });

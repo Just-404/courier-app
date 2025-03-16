@@ -1,11 +1,13 @@
-body {
+.login-container,
+.signUp-container {
   height: 100vh;
   background: linear-gradient(#2348db, #38c9fe);
-  display: flex;
+  display: grid;
+  align-content: center;
+  grid-template-rows: min-content;
+  grid-template-columns: min-content;
   justify-content: center;
-  align-items: center;
 }
-
 .container {
   display: flex;
   flex-direction: column;
@@ -52,7 +54,8 @@ body {
   padding-right: 10px;
 }
 
-div > img {
+.input-item > img,
+.select-item > img {
   width: 1.5rem;
   margin: 0px 30px;
 }

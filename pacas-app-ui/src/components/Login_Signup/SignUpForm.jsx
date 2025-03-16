@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../utils/AuthContext";
-import userIcon from "../../assets/Login_SignUp/user.png";
+import userIcon from "../../assets/user.png";
 import pwdIcon from "../../assets/Login_SignUp/padlock.png";
 import roleIcon from "../../assets/Login_SignUp/settings.png";
 import "./Login_Signup.css";
@@ -60,7 +60,7 @@ const SignUpForm = () => {
   };
 
   return (
-    <>
+    <div className="signUp-container">
       {errors.length > 0 && (
         <MessageWindow msgs={errors} additionalClasses="error" />
       )}
@@ -147,7 +147,7 @@ const SignUpForm = () => {
           </button>
         </div>
       </form>
-    </>
+    </div>
   );
 };
 
