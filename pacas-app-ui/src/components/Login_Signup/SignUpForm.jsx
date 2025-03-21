@@ -5,7 +5,7 @@ import userIcon from "../../assets/user.png";
 import pwdIcon from "../../assets/Login_SignUp/padlock.png";
 import roleIcon from "../../assets/Login_SignUp/settings.png";
 import "./Login_Signup.css";
-import MessageWindow from "../msgWindow";
+import { toast } from "react-toastify";
 
 const SignUpForm = () => {
   const [formData, setFormData] = useState({
@@ -13,21 +13,36 @@ const SignUpForm = () => {
     password: "",
     userRole: "DISTRIBUTOR",
   });
-  const [errors, setErrors] = useState([]);
-  const [successMsg, setSuccessMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const { setAuth } = useAuth();
 
   const navigate = useNavigate();
 
   const addError = (newError) => {
-    setErrors((prevErrors) => [...prevErrors, newError]);
-
-    setTimeout(() => {
-      setErrors((prevErrors) => prevErrors.slice(1));
-    }, 5000);
+    toast.error(newError, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
   };
 
+  const addSuccessMsg = (newMsg) => {
+    toast.success(newMsg, {
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -47,7 +62,7 @@ const SignUpForm = () => {
         throw new Error(data.error);
       }
 
-      setSuccessMsg("Sign-up successful! Redirecting...");
+      addSuccessMsg("Sign-up successful! Redirecting...");
 
       setAuth({ isAuthenticated: true, user: data.user });
       setTimeout(() => {
@@ -61,12 +76,6 @@ const SignUpForm = () => {
 
   return (
     <div className="signUp-container">
-      {errors.length > 0 && (
-        <MessageWindow msgs={errors} additionalClasses="error" />
-      )}
-      {successMsg && (
-        <MessageWindow msgs={[successMsg]} additionalClasses="success" />
-      )}
       <div className="btns-container">
         <div className={"btn-signUp"}>Sign Up</div>
         <div className={"btn-login gray"} onClick={() => navigate("/login")}>

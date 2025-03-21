@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
       .then((data) => setAuth({ ...data, loading: false }))
       .catch((err) => {
         setAuth({ isAuthenticated: false, user: null, loading: false });
-        console.log("Error", err);
+        console.log("Error in auth", err);
       });
   }, []);
 

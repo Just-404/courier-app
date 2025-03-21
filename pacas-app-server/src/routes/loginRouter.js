@@ -20,11 +20,14 @@ loginRouter.post("/login", (req, res, next) => {
 });
 
 loginRouter.get("/logout", (req, res) => {
-  req.logOut((err) => {
+  req.logout((err) => {
     if (err) {
       return next(err);
     }
-    res.redirect("/");
+    req.session.destroy(() => {
+      res.clearCookie("connect.sid");
+      res.status(200).json({ msg: "User logged out" });
+    });
   });
 });
 

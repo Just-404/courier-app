@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import userSection from "../../utils/UserSection";
 import Menu from "../Menu";
 
-const Sidebar = ({ user }) => {
+const Sidebar = ({ user, setActiveSection }) => {
   const navigate = useNavigate();
   const dataSection =
     user.role === "ADMIN"
@@ -23,12 +23,10 @@ const Sidebar = ({ user }) => {
       <h1>Pacas App</h1>
 
       <div className="sidebar-body">
-        <Menu data={dataSection} />
+        <Menu data={dataSection} setActiveSection={setActiveSection} />
       </div>
       <div className="sidebar-footer">
-        <span onClick={() => handleLogout}>
-          <a>Logout</a>
-        </span>
+        <a onClick={handleLogout}>Logout</a>
       </div>
     </aside>
   );

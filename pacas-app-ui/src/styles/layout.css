@@ -38,6 +38,10 @@ header .user-profile p {
 main {
   grid-area: 2 / 2 / 3 / 3;
   padding: 1em;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1em;
 }
 
 aside {

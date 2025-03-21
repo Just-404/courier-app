@@ -1,0 +1,13 @@
+.pagination {
+  display: flex;
+  justify-content: space-around;
+}
+.pagination li {
+  list-style-type: none;
+}
+.page-num {
+}
+
+.pagination .selected {
+  color: red;
+}

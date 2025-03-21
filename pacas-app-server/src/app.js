@@ -11,6 +11,7 @@ const userRouter = require("./routes/userRouter");
 const authRouter = require("./routes/authRouter");
 
 require("dotenv").config();
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -33,6 +34,7 @@ app.use(
       maxAge: 60 * 60 * 1000, // One hour
       secure: process.env.NODE_ENV === "production",
     },
+    rolling: true,
   })
 );
 
@@ -54,7 +56,7 @@ app.use((req, res, next) => {
 app.use("", loginRouter);
 app.use("", signUpRouter);
 app.use("/api", authRouter);
-app.use("/:role/:user", userAuth.isAuth, userRouter);
+app.use("/api/:role", userAuth.isAuth, userRouter);
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(ReactRoute, "index.html"));
