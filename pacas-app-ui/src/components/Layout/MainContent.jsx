@@ -13,10 +13,10 @@ const MainContent = ({ user, activeSection }) => {
         <UsersManagement user={user} />
       )}
       {activeSection === UserSection.adminSection[2].title && (
-        <OrdersManagement />
+        <OrdersManagement loggedUser={user} />
       )}
       {activeSection === UserSection.adminSection[3].title && (
-        <PacasManagement />
+        <PacasManagement loggedUser={user} />
       )}
     </main>
   );

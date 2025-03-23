@@ -27,6 +27,10 @@ class Paca {
   async deletePaca(id) {
     return await prisma.paca.delete({ where: { id } });
   }
+
+  async countPacas() {
+    return await prisma.paca.count();
+  }
 }
 
 module.exports = new Paca();

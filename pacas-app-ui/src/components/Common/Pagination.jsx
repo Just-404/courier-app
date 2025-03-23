@@ -6,7 +6,7 @@ const Pagination = ({ data, onPageCount, pageCount, renderItem }) => {
     const newPage = event.selected + 1;
     onPageCount(newPage);
   };
-  return !data ? (
+  return !data || data.length === 0 ? (
     <div>Nothing to show here</div>
   ) : (
     <>

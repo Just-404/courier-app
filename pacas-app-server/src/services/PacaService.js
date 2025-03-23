@@ -8,14 +8,17 @@ class PacaService {
   async getPacaByID(id) {
     return await pacaModel.getPacaByID(id);
   }
-  async addPaca(paca, imgUrl) {
-    return await pacaModel.addPaca({ ...paca, imgUrl });
+  async addPaca(paca) {
+    return await pacaModel.addPaca({ ...paca });
   }
-  async updatePaca(id, paca, imgUrl) {
-    return await pacaModel.updatePaca(id, { ...paca, imgUrl });
+  async updatePaca(id, paca) {
+    return await pacaModel.updatePaca(id, { ...paca });
   }
   async deletePaca(id) {
     return await pacaModel.deletePaca(id);
+  }
+  async countPacas() {
+    return await pacaModel.countPacas();
   }
 }
 

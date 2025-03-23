@@ -1,9 +1,10 @@
-import Pagination from "../Common/Pagination";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
+import fetchApi from "../../utils/fetchApi";
 import addToastMessage from "../../utils/toastMessage";
 import styles from "../../styles/itemsCard.module.css";
 import UserCard from "../Cards/UserCard";
-
+import Pagination from "../Common/Pagination";
+import UsersModals from "../Modals/UsersModal";
 const UsersManagement = ({ user }) => {
   const [users, setUsers] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -15,7 +16,9 @@ const UsersManagement = ({ user }) => {
     role: "DISTRIBUTOR",
   });
 
-  const dialogRef = useRef(null);
+  useEffect(() => {
+    fetchUsers(currentPage);
+  }, [currentPage]);
 
   const resetForm = () => {
     setNewUser({
@@ -25,110 +28,53 @@ const UsersManagement = ({ user }) => {
     });
   };
 
-  const addUser = (e) => {
-    e.preventDefault();
-    if (newUser.name === "" || newUser.password === "") {
-      addToastMessage("error", "Error: inputs cannot be empty");
-      return;
+  const addUser = async (newUser) => {
+    try {
+      await fetchApi("/admin/users/sign-up", "POST", newUser);
+      fetchUsers(currentPage);
+      addToastMessage("success", "User created successfully");
+      setShowModal(false);
+      resetForm();
+    } catch (error) {
+      addToastMessage("error", error.message);
     }
-    fetch("/api/admin/users/sign-up", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newUser),
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then(() => {
-        fetchUsers(currentPage);
-        addToastMessage("success", "User created successfully");
-        setShowModal(false);
-        resetForm();
-      })
-      .catch((error) => addToastMessage("error", error.message));
   };
-  const fetchUsers = (page = 1, limit = 10) => {
-    fetch(`/api/${user.role}/users?page=${page}&limit=${limit}`, {
-      method: "GET",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((response) =>
-        response.json().then((data) => {
-          if (!data.users || !data.total) {
-            throw new Error("Invalid response data");
-          }
-          setUsers(data.users);
-          setPageCount(Math.ceil(data.total / limit));
-        })
-      )
-      .catch((error) => {
-        addToastMessage("error", error.message);
-        console.error("Error fetching users:", error.message);
-      });
-  };
-
-  useEffect(() => {
-    fetchUsers(currentPage);
-  }, [currentPage]);
-
-  useEffect(() => {
-    if (showModal && dialogRef.current) {
-      dialogRef.current.showModal();
-    } else if (dialogRef.current) {
-      dialogRef.current.close();
+  const fetchUsers = async (page = 1, limit = 10) => {
+    try {
+      const data = await fetchApi(
+        `/${user.role}/users?page=${page}&limit=${limit}`
+      );
+      setUsers(data.users);
+      setPageCount(Math.ceil(data.total / limit));
+    } catch (error) {
+      addToastMessage("error", error.message);
     }
-  }, [showModal]);
-
-  const handleEditUser = (editedUser, callback) => {
-    fetch(`/api/${editedUser.role}/users/${editedUser.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(editedUser),
-      credentials: "include",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          return response.json().then((errorData) => {
-            console.log(errorData);
-
-            throw new Error(errorData.error || "Failed to edit user");
-          });
-        }
-        return response.json();
-      })
-      .then(() => {
-        fetchUsers(currentPage);
-        addToastMessage("success", "User edited successfully!");
-        callback(true);
-      })
-      .catch((error) => {
-        addToastMessage("error", error.message);
-        callback(false);
-      });
   };
 
-  const handleDeleteUser = (userID) => {
-    fetch(`/api/${user.role}/users/${userID}`, {
-      method: "DELETE",
-      credentials: "include",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          return response.json().then((errorData) => {
-            console.log(errorData);
+  const handleEditUser = async (editedUser, callback) => {
+    try {
+      await fetchApi(
+        `/${editedUser.role}/users/${editedUser.id}`,
+        "PUT",
+        editedUser
+      );
+      fetchUsers(currentPage);
+      addToastMessage("success", "User edited successfully!");
+      callback(true);
+    } catch (error) {
+      addToastMessage("error", error.message);
+      callback(false);
+    }
+  };
 
-            throw new Error(errorData.error || "Failed to erase user");
-          });
-        }
-        return response.json();
-      })
-      .then(() => {
-        fetchUsers(currentPage);
-        addToastMessage("success", "User deleted!");
-      })
-      .catch((error) => {
-        addToastMessage("error", error.message);
-      });
+  const handleDeleteUser = async (userID) => {
+    try {
+      await fetchApi(`/${user.role}/users/${userID}`, "DELETE");
+      fetchUsers(currentPage);
+      addToastMessage("success", "User deleted!");
+    } catch (error) {
+      addToastMessage("error", error.message);
+    }
   };
 
   return (
@@ -136,49 +82,15 @@ const UsersManagement = ({ user }) => {
       <div className={styles.addUser}>
         <button onClick={() => setShowModal(true)}>+</button>
       </div>
-      {showModal && (
-        <dialog ref={dialogRef} className={styles.addUserModal}>
-          <h2>Create User:</h2>
-          <form onSubmit={addUser}>
-            <input
-              type="text"
-              placeholder="Name"
-              value={newUser.name}
-              onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-              required
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={newUser.password}
-              onChange={(e) =>
-                setNewUser({ ...newUser, password: e.target.value })
-              }
-              required
-            />
-            <select
-              defaultValue={newUser.role}
-              onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-            >
-              <option value="ADMIN">Admin</option>
-              <option value="PROVIDER">Provider</option>
-              <option value="TRANSPORTER">Transporter</option>
-              <option value="DISTRIBUTOR">Distributor</option>
-            </select>
-            <button type="submit">Create</button>
-            <button
-              type="button"
-              onClick={() => {
-                setShowModal(false);
-                resetForm();
-                addToastMessage("warning", "Action cancelled!");
-              }}
-            >
-              Cancel
-            </button>
-          </form>
-        </dialog>
-      )}
+
+      <UsersModals
+        showModal={showModal}
+        setShowModal={setShowModal}
+        newUser={newUser}
+        onSubmit={addUser}
+        addToastMessage={addToastMessage}
+        resetForm={resetForm}
+      />
       <Pagination
         data={users}
         onPageCount={(page) => setCurrentPage(page)}
