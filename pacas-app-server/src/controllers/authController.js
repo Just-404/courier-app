@@ -22,7 +22,22 @@ const isAdmin = (req, res, next) => {
     });
   }
 };
+
+const isProvider = (req, res, next) => {
+  if (req.user.role === userRole.PROVIDER) {
+    next();
+  } else {
+    res
+      .status(401)
+      .json({
+        msg:
+          "You are not Authorized to see this page. You must be " +
+          userRole.PROVIDER,
+      });
+  }
+};
 module.exports = {
   isAuth,
   isAdmin,
+  isProvider,
 };

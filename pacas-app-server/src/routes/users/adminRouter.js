@@ -18,7 +18,8 @@ adminRouter.delete("/users/:id", userController.deleteUser);
 adminRouter.get("/orders", orderController.getOrders);
 adminRouter.get("/orders/:id", orderController.getOrderById);
 adminRouter.put("/orders/:id/status", orderController.updateOrderStatus);
-
+adminRouter.put("/orders/:id", orderController.cancelOrder);
+adminRouter.delete("/orders/:id", orderController.deleteOrder);
 //Pacas management
 adminRouter.get("/pacas", pacaController.getPacas);
 adminRouter.post("/pacas", pacaController.addPaca);

@@ -15,9 +15,17 @@ const MainContent = ({ user, activeSection }) => {
       {activeSection === UserSection.adminSection[2].title && (
         <OrdersManagement loggedUser={user} />
       )}
-      {activeSection === UserSection.adminSection[3].title && (
-        <PacasManagement loggedUser={user} />
+      {activeSection === UserSection.adminSection[3].title &&
+        user.role === "ADMIN" && <PacasManagement loggedUser={user} />}
+
+      {activeSection === UserSection.providerSection[1].title &&
+        user.role === "PROVIDER" && <PacasManagement loggedUser={user} />}
+
+      {activeSection === UserSection.providerSection[2].title && (
+        <OrdersManagement loggedUser={user} />
       )}
+      {activeSection === UserSection.distributorSection[1].title &&
+        user.role === "DISTRIBUTOR" && <PacasManagement loggedUser={user} />}
     </main>
   );
 };

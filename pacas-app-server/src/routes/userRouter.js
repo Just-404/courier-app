@@ -1,22 +1,25 @@
 const { Router } = require("express");
 const adminRouter = require("../routes/users/adminRouter");
+const providerRouter = require("../routes/users/providerRouter");
+const distributorRouter = require("../routes/users/distributorRouter");
 const userRouter = Router();
+
 const { Role } = require("../utils/enums");
 
 userRouter.use((req, res, next) => {
-  1;
   switch (req.user.role) {
     case Role.ADMIN:
       adminRouter(req, res, next);
       break;
     case Role.PROVIDER:
-      // future providerRouter
+      providerRouter(req, res, next);
+
       break;
     case Role.TRANSPORTER:
       // future transporterRouter
       break;
     case Role.DISTRIBUTOR:
-      // future distributorRouter
+      distributorRouter(req, res, next);
       break;
     default:
       res.status(403).json({ msg: "Role doesn't exist" });

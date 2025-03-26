@@ -2,14 +2,28 @@ const pacaService = require("../services/PacaService");
 const { upload } = require("../utils/cloudinary");
 const { cloudinary } = require("../utils/cloudinary");
 const asyncHandler = require("express-async-handler");
+const { Role } = require("../utils/enums");
 
 const getPacas = asyncHandler(async (req, res, next) => {
   try {
     const { page = 1, limit = 10 } = req.query;
     const offset = (parseInt(page) - 1) * limit;
 
-    const pacas = await pacaService.getPacas(offset, parseInt(limit));
-    const totalPacas = await pacaService.countPacas();
+    let pacas, totalPacas;
+
+    if (res.locals.currentUser.role === Role.PROVIDER) {
+      console.log(req.query.provider_id);
+
+      pacas = await pacaService.getPacasByProvider(
+        req.query.provider_id,
+        offset,
+        parseInt(limit)
+      );
+      totalPacas = await pacaService.countPacas();
+    } else {
+      pacas = await pacaService.getPacas(offset, parseInt(limit));
+      totalPacas = await pacaService.countPacas();
+    }
 
     res.status(200).json({ pacas, total: totalPacas });
   } catch (error) {
@@ -83,8 +97,6 @@ const updatePaca = asyncHandler(async (req, res) => {
       }
       imageUrl = req.file.path;
     }
-    console.log("id", req.params.id);
-    console.log("body", req.body);
     delete req.body.imgFile;
     const updatedPaca = await pacaService.updatePaca(req.params.id, req.body);
 

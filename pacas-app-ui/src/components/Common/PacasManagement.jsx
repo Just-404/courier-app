@@ -13,7 +13,7 @@ const PacasManagement = ({ loggedUser }) => {
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [newPaca, setNewPaca] = useState({
-    provider_id: loggedUser?.id || "",
+    provider_id: loggedUser?.id,
     name: "",
     description: "",
     weight: 0.0,
@@ -41,10 +41,13 @@ const PacasManagement = ({ loggedUser }) => {
   }, [currentPage]);
 
   const fetchPacas = async (page = 1, limit = 10) => {
+    let reqUrl = `/${loggedUser.role}/pacas?page=${page}&limit=${limit}`;
+    if (loggedUser.role === "PROVIDER")
+      reqUrl += `&provider_id=${loggedUser.id}`;
+
     try {
-      const data = await fetchApi(
-        `/${loggedUser.role}/pacas?page=${page}&limit=${limit}`
-      );
+      const data = await fetchApi(reqUrl);
+
       setPacas(data.pacas);
       setPageCount(Math.ceil(data.total / limit));
     } catch (error) {
@@ -68,7 +71,6 @@ const PacasManagement = ({ loggedUser }) => {
     try {
       await fetchApi("/admin/pacas", "POST", formData, true);
       fetchPacas(currentPage);
-      addToastMessage("success", "Paca added successfully");
       setShowModal(false);
       resetForm();
     } catch (error) {
@@ -85,7 +87,6 @@ const PacasManagement = ({ loggedUser }) => {
         editedPaca
       );
       fetchPacas(currentPage);
-      addToastMessage("success", "Paca edited successfully!");
       callback(true);
     } catch (error) {
       addToastMessage("error", error.message);
@@ -97,7 +98,6 @@ const PacasManagement = ({ loggedUser }) => {
     try {
       await fetchApi(`/${loggedUser.role}/pacas/${pacaId}`, "DELETE");
       fetchPacas(currentPage);
-      addToastMessage("success", "Paca deleted!");
     } catch (error) {
       addToastMessage("error", error.message);
     }
@@ -120,17 +120,19 @@ const PacasManagement = ({ loggedUser }) => {
   };
   return (
     <>
-      <div className={styles.addUser}>
-        <button
-          onClick={() => {
-            resetForm();
-            setEditingPaca(null);
-            setShowModal(true);
-          }}
-        >
-          +
-        </button>
-      </div>
+      {loggedUser.role !== "DISTRIBUTOR" && (
+        <div className={styles.addUser}>
+          <button
+            onClick={() => {
+              resetForm();
+              setEditingPaca(null);
+              setShowModal(true);
+            }}
+          >
+            +
+          </button>
+        </div>
+      )}
 
       <PacaModal
         showModal={showModal}
@@ -142,14 +144,13 @@ const PacasManagement = ({ loggedUser }) => {
       <Pagination
         data={pacas}
         onPageCount={(page) => setCurrentPage(page)}
-        onEdit={handleEditPaca}
-        onDelete={handleDeletePaca}
         pageCount={pageCount}
         renderItem={(paca) => (
           <PacaCard
             paca={paca}
             styles={styles}
             key={paca.id}
+            loggedUser={loggedUser}
             onEdit={() => handleEditOpenModal(paca)}
             onDelete={handleDeletePaca}
           />

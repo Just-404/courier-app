@@ -1,3 +1,5 @@
+import addToastMessage from "./toastMessage";
+
 const fetchApi = async (
   endpoint,
   method = "GET",
@@ -24,6 +26,7 @@ const fetchApi = async (
       throw new Error(data.error || data.msg || "Something went wrong");
     }
 
+    addToastMessage("success", data.msg);
     return data;
   } catch (error) {
     console.error(`API Error [${method}] ${endpoint}:`, error.message);

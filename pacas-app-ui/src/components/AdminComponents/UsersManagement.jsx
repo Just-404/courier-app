@@ -32,7 +32,6 @@ const UsersManagement = ({ user }) => {
     try {
       await fetchApi("/admin/users/sign-up", "POST", newUser);
       fetchUsers(currentPage);
-      addToastMessage("success", "User created successfully");
       setShowModal(false);
       resetForm();
     } catch (error) {
@@ -59,7 +58,6 @@ const UsersManagement = ({ user }) => {
         editedUser
       );
       fetchUsers(currentPage);
-      addToastMessage("success", "User edited successfully!");
       callback(true);
     } catch (error) {
       addToastMessage("error", error.message);
@@ -71,7 +69,6 @@ const UsersManagement = ({ user }) => {
     try {
       await fetchApi(`/${user.role}/users/${userID}`, "DELETE");
       fetchUsers(currentPage);
-      addToastMessage("success", "User deleted!");
     } catch (error) {
       addToastMessage("error", error.message);
     }

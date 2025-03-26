@@ -8,7 +8,7 @@ import "../styles/layout.css";
 
 const Layout = () => {
   const { auth } = useAuth() ?? null;
-  const user = auth?.user ?? { name: "Guest", role: "ADMIN" };
+  const user = auth?.user ?? { name: "Guest", role: "PROVIDER" };
 
   const [activeSection, setActiveSection] = useState("");
   return (

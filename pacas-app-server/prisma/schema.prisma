@@ -40,13 +40,13 @@ model Paca {
 model Order {
   id             String         @id @default(uuid())
   distributor_id String
-  transporter_id String
+  transporter_id String?
   total_price    Decimal        @default(0) @db.Decimal(10, 2)
   status         Order_Status   @default(PENDING)
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   distributor    User           @relation("OrdersDistributor", fields: [distributor_id], references: [id])
-  transporter    User           @relation("OrdersTransporter", fields: [transporter_id], references: [id])
+  transporter    User?          @relation("OrdersTransporter", fields: [transporter_id], references: [id])
   Order_Details  OrderDetails[]
   Tracking       Tracking[]
 

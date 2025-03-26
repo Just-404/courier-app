@@ -4,7 +4,9 @@ class PacaService {
   async getPacas(offset, limit) {
     return await pacaModel.getPacas(offset, limit);
   }
-
+  async getPacasByProvider(providerId, offset, limit) {
+    return await pacaModel.getPacasByProvider(providerId, offset, limit);
+  }
   async getPacaByID(id) {
     return await pacaModel.getPacaByID(id);
   }
@@ -19,6 +21,9 @@ class PacaService {
   }
   async countPacas() {
     return await pacaModel.countPacas();
+  }
+  async countPacasByProvider(providerId) {
+    return await pacaModel.countPacasByProvider(providerId);
   }
 }
 

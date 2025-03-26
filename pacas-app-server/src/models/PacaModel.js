@@ -13,6 +13,15 @@ class Paca {
       where: { id },
     });
   }
+
+  async getPacasByProvider(providerId, offset, limit) {
+    return await prisma.paca.findMany({
+      where: { provider_id: providerId },
+      skip: offset,
+      take: limit,
+    });
+  }
+
   async addPaca(pacaData) {
     return await prisma.paca.create({ data: { ...pacaData } });
   }
@@ -30,6 +39,11 @@ class Paca {
 
   async countPacas() {
     return await prisma.paca.count();
+  }
+  async countPacasByProvider(providerId) {
+    return await prisma.paca.count({
+      where: { provider_id: providerId },
+    });
   }
 }
 

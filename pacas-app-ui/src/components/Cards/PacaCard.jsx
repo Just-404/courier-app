@@ -1,6 +1,6 @@
 import addToastMessage from "../../utils/toastMessage";
-
-const PacaCard = ({ paca, styles, onEdit, onDelete }) => {
+import fetchApi from "../../utils/fetchApi";
+const PacaCard = ({ loggedUser, paca, styles, onEdit, onDelete }) => {
   const handleEditPaca = () => {
     const confirmation = confirm("Are you sure you want to change this paca?");
     if (!confirmation) {
@@ -20,6 +20,36 @@ const PacaCard = ({ paca, styles, onEdit, onDelete }) => {
     }
 
     onDelete(paca.id);
+  };
+
+  const handleOrderPaca = async () => {
+    const confirmation = confirm("Are you sure you want to order this paca?");
+    const quantity = parseFloat(prompt("Insert quantity: ", paca.quantity));
+
+    if (!confirmation || !quantity) {
+      addToastMessage("warning", "Order cancelled!");
+      return;
+    }
+
+    if (quantity < 1) {
+      addToastMessage("error", "You can't select less than one paca");
+      return;
+    } else if (quantity > paca.quantity) {
+      addToastMessage("error", "You can't select more than " + paca.quantity);
+      return;
+    }
+
+    const newOrder = {
+      distributor_id: loggedUser.id,
+      total_price: paca.price * quantity,
+      paca_id: paca.id,
+      quantity,
+    };
+    try {
+      await fetchApi(`/${loggedUser.role}/orders`, "POST", newOrder);
+    } catch (error) {
+      addToastMessage("error", error.message);
+    }
   };
 
   return (
@@ -48,8 +78,19 @@ const PacaCard = ({ paca, styles, onEdit, onDelete }) => {
         <p>
           <strong>Quantity:</strong> {paca.quantity}
         </p>
-        <button onClick={handleEditPaca}>Edit</button>
-        <button onClick={handleDeletePaca}>Delete</button>
+        {loggedUser.role !== "DISTRIBUTOR" ? (
+          <>
+            <button onClick={handleEditPaca}>Edit</button>
+            <button onClick={handleDeletePaca}>Delete</button>
+          </>
+        ) : (
+          <button
+            onClick={handleOrderPaca}
+            style={{ backgroundColor: "green", color: "white" }}
+          >
+            Order Now
+          </button>
+        )}
       </div>
     </div>
   );
