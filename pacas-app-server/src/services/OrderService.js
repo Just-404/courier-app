@@ -25,7 +25,6 @@ class OrderService {
       transporter_id
     );
   }
-
   async updateOrder(id, data) {
     return await orderModel.updateOrder(id, data);
   }

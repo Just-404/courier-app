@@ -8,6 +8,7 @@ const transporterRouter = Router();
 
 // Pending orders
 transporterRouter.get("/orders", orderController.getOrdersByStatus);
+transporterRouter.get("/orders/delivered", orderController.getDeliveredOrders);
 transporterRouter.put(
   "/tracking/return-order",
   orderController.returnTransporterOrder

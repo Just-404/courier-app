@@ -73,7 +73,7 @@ const TrackingStatusModal = ({
             addToastMessage("warning", "Action cancelled!");
           }}
         >
-          Cancel Cancel
+          Cancel
         </button>
       </form>
     </dialog>

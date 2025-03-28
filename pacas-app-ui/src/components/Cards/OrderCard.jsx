@@ -1,5 +1,5 @@
 import addToastMessage from "../../utils/toastMessage";
-import { OrderStatus, Role } from "../../utils/enums";
+import { OrderStatus, TrackingStatus, Role } from "../../utils/enums";
 const OrderCard = ({
   loggedUser,
   order,
@@ -9,6 +9,15 @@ const OrderCard = ({
   onEditStatus,
   onTakeOrder,
 }) => {
+  const handleDeliverOrder = () => {
+    const result = confirm("Are you sure you want to deliver this order?");
+    if (!result) {
+      addToastMessage("warning", "Order delivery cancelled!");
+      return;
+    }
+
+    onEditStatus(order.id, OrderStatus.DELIVERED);
+  };
   const handleCancelOrder = () => {
     const result = confirm("Are you sure you want to cancel this order?");
     if (!result) {
@@ -42,6 +51,7 @@ const OrderCard = ({
   const handleTakeOrder = () => {
     onTakeOrder(order);
   };
+
   return (
     <div className={styles.card}>
       <div className={styles.cardHeader}>
@@ -54,6 +64,10 @@ const OrderCard = ({
               (order.status === "READY" || order.status === "PENDING") && (
                 <button onClick={toggleStatus}>Toggle</button>
               )}
+
+            {order.status === OrderStatus.DELIVERED && (
+              <p>Delivered on: {new Date(order.updatedAt).toLocaleString()}</p>
+            )}
           </div>
         </div>
       </div>
@@ -94,12 +108,17 @@ const OrderCard = ({
           ))}
         </div>
 
-        {loggedUser.role === Role.ADMIN && (
-          <>
-            <button onClick={handleCancelOrder}>Cancel Order</button>
-            <button onClick={handleDeleteOrder}>Delete</button>
-          </>
-        )}
+        {loggedUser.role === Role.ADMIN &&
+          order.Tracking[0].status === TrackingStatus.ORIGIN_WAREHOUSE && (
+            <>
+              <button onClick={handleCancelOrder}>Cancel Order</button>
+              <button onClick={handleDeleteOrder}>Delete</button>
+            </>
+          )}
+        {loggedUser.role === Role.ADMIN &&
+          order.status === OrderStatus.ON_WAREHOUSE && (
+            <button onClick={handleDeliverOrder}>Deliver</button>
+          )}
         {loggedUser.role === Role.TRANSPORTER && (
           <button onClick={handleTakeOrder}>Take</button>
         )}

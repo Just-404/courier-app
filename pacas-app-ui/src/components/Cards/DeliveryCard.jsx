@@ -1,4 +1,4 @@
-import { OrderStatus, Role } from "../../utils/enums";
+import { TrackingStatus, OrderStatus, Role } from "../../utils/enums";
 const DeliveryCard = ({
   onOpenModal,
   loggedUser,
@@ -23,9 +23,11 @@ const DeliveryCard = ({
 
           <div>
             <p>Status: {order.orderStatus}</p>
-            {loggedUser.role === Role.TRANSPORTER && (
-              <button onClick={handleReturnOrder}>Return</button>
-            )}
+            {loggedUser.role === Role.TRANSPORTER &&
+              order.currentTrackingStatus ===
+                TrackingStatus.ORIGIN_WAREHOUSE && (
+                <button onClick={handleReturnOrder}>Return</button>
+              )}
           </div>
         </div>
       </div>
@@ -42,13 +44,15 @@ const DeliveryCard = ({
           <p>
             <strong>Tracking Status:</strong> {order.currentTrackingStatus}
           </p>
-          <button
-            onClick={() => {
-              onOpenModal(order);
-            }}
-          >
-            Update
-          </button>
+          {order.currentTrackingStatus !== TrackingStatus.LOCAL_WAREHOUSE && (
+            <button
+              onClick={() => {
+                onOpenModal(order);
+              }}
+            >
+              Update
+            </button>
+          )}
         </div>
         <div className="order-details">
           <h4>Order Details</h4>

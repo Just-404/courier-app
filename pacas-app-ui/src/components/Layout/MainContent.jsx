@@ -4,6 +4,7 @@ import UsersManagement from "../AdminComponents/UsersManagement";
 import OrdersManagement from "../AdminComponents/OrdersManagement";
 import PacasManagement from "../Common/PacasManagement";
 import DeliveryManagement from "../Common/DeliveryManagement";
+import OrdersDeliveredManagement from "../Common/OrdersDeliveredManagement";
 import Profile from "../Common/Profile";
 const MainContent = ({ user, activeSection }) => {
   return (
@@ -34,6 +35,10 @@ const MainContent = ({ user, activeSection }) => {
 
       {activeSection === UserSection.transporterSection[2].title && (
         <DeliveryManagement loggedUser={user} />
+      )}
+
+      {activeSection === UserSection.transporterSection[3].title && (
+        <OrdersDeliveredManagement loggedUser={user} />
       )}
     </main>
   );

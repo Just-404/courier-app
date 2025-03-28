@@ -5,6 +5,13 @@ class TrackingService {
     return await trackingModel.createTracking(data);
   }
 
+  async getDeliveredOrders(offset, limit, transporter_id) {
+    return await trackingModel.getDeliveredOrders(
+      offset,
+      limit,
+      transporter_id
+    );
+  }
   async updateTrackingStatus(orderId, status) {
     return await trackingModel.updateTrackingStatus(orderId, status);
   }

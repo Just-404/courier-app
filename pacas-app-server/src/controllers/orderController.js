@@ -61,6 +61,44 @@ const getOrdersByStatus = asyncHandler(async (req, res) => {
   }
 });
 
+const getDeliveredOrders = asyncHandler(async (req, res) => {
+  try {
+    const { page = 1, limit = 10, transporter_id } = req.query;
+    const offset = (parseInt(page) - 1) * parseInt(limit);
+
+    const orders = await trackingService.getDeliveredOrders(
+      offset,
+      parseInt(limit),
+      transporter_id
+    );
+    console.log(orders);
+
+    if (!orders.length) {
+      return res.status(404).json({ error: "No delivered orders found" });
+    }
+
+    const formattedOrders = orders.map((order) => ({
+      id: order.id,
+      distributor: order.distributor.name,
+      orderStatus: order.status,
+      total_price: order.total_price,
+      createdAt: order.createdAt,
+      totalWeight: order.Order_Details.reduce(
+        (sum, detail) => sum + detail.quantity * detail.paca.weight,
+        0
+      ),
+      currentTrackingStatus: order.Tracking[0].status || "No tracking info",
+      timestamp: order.Tracking[0].updatedAt,
+    }));
+
+    res.status(200).json({ orders: formattedOrders, total: orders.length });
+  } catch (error) {
+    res
+      .status(400)
+      .json({ error: error.message || "Error getting delivered orders" });
+  }
+});
+
 const getTransporterOrders = asyncHandler(async (req, res) => {
   try {
     const { transporter_id, page = 1, limit = 10 } = req.params;
@@ -316,6 +354,7 @@ module.exports = {
   getOrderById,
   getOrdersByStatus,
   getTransporterOrders,
+  getDeliveredOrders,
   updateOrderStatus,
   updateTrackingStatus,
   updateMultipleTrackingStatus,
