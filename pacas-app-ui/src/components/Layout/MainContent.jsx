@@ -3,6 +3,7 @@ import Dashboard from "../Common/Dashboard";
 import UsersManagement from "../AdminComponents/UsersManagement";
 import OrdersManagement from "../AdminComponents/OrdersManagement";
 import PacasManagement from "../Common/PacasManagement";
+import DeliveryManagement from "../Common/DeliveryManagement";
 import Profile from "../Common/Profile";
 const MainContent = ({ user, activeSection }) => {
   return (
@@ -26,6 +27,14 @@ const MainContent = ({ user, activeSection }) => {
       )}
       {activeSection === UserSection.distributorSection[1].title &&
         user.role === "DISTRIBUTOR" && <PacasManagement loggedUser={user} />}
+
+      {activeSection === UserSection.transporterSection[1].title && (
+        <OrdersManagement loggedUser={user} />
+      )}
+
+      {activeSection === UserSection.transporterSection[2].title && (
+        <DeliveryManagement loggedUser={user} />
+      )}
     </main>
   );
 };

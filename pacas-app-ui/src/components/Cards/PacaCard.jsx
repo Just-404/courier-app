@@ -1,6 +1,5 @@
 import addToastMessage from "../../utils/toastMessage";
-import fetchApi from "../../utils/fetchApi";
-const PacaCard = ({ loggedUser, paca, styles, onEdit, onDelete }) => {
+const PacaCard = ({ loggedUser, paca, styles, onEdit, onDelete, onOrder }) => {
   const handleEditPaca = () => {
     const confirmation = confirm("Are you sure you want to change this paca?");
     if (!confirmation) {
@@ -23,10 +22,9 @@ const PacaCard = ({ loggedUser, paca, styles, onEdit, onDelete }) => {
   };
 
   const handleOrderPaca = async () => {
-    const confirmation = confirm("Are you sure you want to order this paca?");
     const quantity = parseFloat(prompt("Insert quantity: ", paca.quantity));
 
-    if (!confirmation || !quantity) {
+    if (!quantity) {
       addToastMessage("warning", "Order cancelled!");
       return;
     }
@@ -45,11 +43,7 @@ const PacaCard = ({ loggedUser, paca, styles, onEdit, onDelete }) => {
       paca_id: paca.id,
       quantity,
     };
-    try {
-      await fetchApi(`/${loggedUser.role}/orders`, "POST", newOrder);
-    } catch (error) {
-      addToastMessage("error", error.message);
-    }
+    onOrder(newOrder);
   };
 
   return (

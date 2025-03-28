@@ -1,5 +1,14 @@
 import addToastMessage from "../../utils/toastMessage";
-const OrderCard = ({ loggedUser, order, styles, onCancel, onDelete }) => {
+import { OrderStatus, Role } from "../../utils/enums";
+const OrderCard = ({
+  loggedUser,
+  order,
+  styles,
+  onCancel,
+  onDelete,
+  onEditStatus,
+  onTakeOrder,
+}) => {
   const handleCancelOrder = () => {
     const result = confirm("Are you sure you want to cancel this order?");
     if (!result) {
@@ -21,12 +30,31 @@ const OrderCard = ({ loggedUser, order, styles, onCancel, onDelete }) => {
 
     onDelete(order.id);
   };
+
+  const toggleStatus = () => {
+    const newStatus =
+      order.status === OrderStatus.PENDING
+        ? OrderStatus.READY
+        : OrderStatus.PENDING;
+    onEditStatus(order.id, newStatus);
+  };
+
+  const handleTakeOrder = () => {
+    onTakeOrder(order);
+  };
   return (
     <div className={styles.card}>
       <div className={styles.cardHeader}>
         <div>
           <h3>Order ID: {order.id.slice(0, 8)}...</h3>
-          <p>Status: {order.status}</p>
+
+          <div>
+            <p>Status: {order.status}</p>
+            {loggedUser.role === Role.ADMIN &&
+              (order.status === "READY" || order.status === "PENDING") && (
+                <button onClick={toggleStatus}>Toggle</button>
+              )}
+          </div>
         </div>
       </div>
 
@@ -59,18 +87,21 @@ const OrderCard = ({ loggedUser, order, styles, onCancel, onDelete }) => {
                 <strong>Quantity:</strong> {detail.quantity}
               </p>
               <p>
-                <strong>Total Weight:</strong>{" "}
+                <strong>Total Weight:</strong>
                 {detail.quantity * detail.paca.weight}
               </p>
             </div>
           ))}
         </div>
 
-        {loggedUser.role === "ADMIN" && (
+        {loggedUser.role === Role.ADMIN && (
           <>
             <button onClick={handleCancelOrder}>Cancel Order</button>
             <button onClick={handleDeleteOrder}>Delete</button>
           </>
+        )}
+        {loggedUser.role === Role.TRANSPORTER && (
+          <button onClick={handleTakeOrder}>Take</button>
         )}
       </div>
     </div>

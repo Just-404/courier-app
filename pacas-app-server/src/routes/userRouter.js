@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const adminRouter = require("../routes/users/adminRouter");
 const providerRouter = require("../routes/users/providerRouter");
+const transporterRouter = require("../routes/users/transporterRouter");
 const distributorRouter = require("../routes/users/distributorRouter");
 const userRouter = Router();
 
@@ -13,10 +14,9 @@ userRouter.use((req, res, next) => {
       break;
     case Role.PROVIDER:
       providerRouter(req, res, next);
-
       break;
     case Role.TRANSPORTER:
-      // future transporterRouter
+      transporterRouter(req, res, next);
       break;
     case Role.DISTRIBUTOR:
       distributorRouter(req, res, next);

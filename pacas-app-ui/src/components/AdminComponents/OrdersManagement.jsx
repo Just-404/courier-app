@@ -4,10 +4,9 @@ import fetchApi from "../../utils/fetchApi";
 import addToastMessage from "../../utils/toastMessage";
 import OrderCard from "../Cards/OrderCard";
 import styles from "../../styles/itemsCard.module.css";
-
+import { OrderStatus } from "../../utils/enums";
 const OrdersManagement = ({ loggedUser }) => {
   const [orders, setOrders] = useState([]);
-  //const [showModal, setShowModal] = useState(false);
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -15,7 +14,10 @@ const OrdersManagement = ({ loggedUser }) => {
     let reqUrl = `/${loggedUser.role}/orders?page=${page}&limit=${limit}`;
     if (loggedUser.role === "PROVIDER") {
       reqUrl += `&provider_id=${loggedUser.id}`;
+    } else if (loggedUser.role === "TRANSPORTER") {
+      reqUrl += `&status=${OrderStatus.READY}`;
     }
+
     try {
       const data = await fetchApi(reqUrl);
       setOrders(data.orders);
@@ -35,6 +37,29 @@ const OrdersManagement = ({ loggedUser }) => {
       fetchOrders(currentPage);
     } catch (error) {
       addToastMessage("error", error.message);
+    }
+  };
+
+  const updateStatus = async (orderId, newStatus) => {
+    try {
+      await fetchApi(`/${loggedUser.role}/orders/${orderId}/status`, "PUT", {
+        status: newStatus,
+      });
+      fetchOrders(currentPage);
+    } catch (error) {
+      addToastMessage("error", error.message);
+    }
+  };
+
+  const takeOrder = async (order) => {
+    try {
+      await fetchApi(`/${loggedUser.role}/orders/${order.id}`, "PUT", {
+        order_id: order.id,
+        transporter_id: loggedUser.id,
+      });
+      fetchOrders(currentPage);
+    } catch (error) {
+      addToastMessage("error", error);
     }
   };
 
@@ -61,6 +86,8 @@ const OrdersManagement = ({ loggedUser }) => {
             loggedUser={loggedUser}
             onCancel={cancelOrder}
             onDelete={deleteOrder}
+            onEditStatus={updateStatus}
+            onTakeOrder={takeOrder}
           />
         )}
       />

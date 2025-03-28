@@ -118,6 +118,15 @@ const PacasManagement = ({ loggedUser }) => {
       await addPaca(paca);
     }
   };
+
+  const handleOrderPaca = async (order) => {
+    try {
+      await fetchApi(`/${loggedUser.role}/orders`, "POST", order);
+      fetchPacas(currentPage);
+    } catch (error) {
+      addToastMessage("error", error.message);
+    }
+  };
   return (
     <>
       {loggedUser.role !== "DISTRIBUTOR" && (
@@ -153,6 +162,7 @@ const PacasManagement = ({ loggedUser }) => {
             loggedUser={loggedUser}
             onEdit={() => handleEditOpenModal(paca)}
             onDelete={handleDeletePaca}
+            onOrder={handleOrderPaca}
           />
         )}
       />

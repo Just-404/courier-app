@@ -11,14 +11,23 @@ class OrderService {
 
     return newOrder;
   }
-  async getOrders(offset, limit, provider_id) {
-    return await orderModel.getOrders(offset, limit, provider_id);
+  async getOrders(offset, limit, provider_id = null, status = null) {
+    return await orderModel.getOrders(offset, limit, provider_id, status);
   }
   async getOrderById(id) {
     return await orderModel.getOrderById(id);
   }
-  async updateOrderStatus(id, status) {
-    return await orderModel.updateOrderStatus(id, status);
+
+  async getOrdersByTransporter(offset, limit, transporter_id) {
+    return await orderModel.getOrdersByTransporter(
+      offset,
+      limit,
+      transporter_id
+    );
+  }
+
+  async updateOrder(id, data) {
+    return await orderModel.updateOrder(id, data);
   }
   async deleteOrder(id) {
     return await orderModel.deleteOrder(id);
