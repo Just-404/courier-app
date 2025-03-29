@@ -12,8 +12,6 @@ const getPacas = asyncHandler(async (req, res, next) => {
     let pacas, totalPacas;
 
     if (res.locals.currentUser.role === Role.PROVIDER) {
-      console.log(req.query.provider_id);
-
       pacas = await pacaService.getPacasByProvider(
         req.query.provider_id,
         offset,
@@ -98,6 +96,8 @@ const updatePaca = asyncHandler(async (req, res) => {
       imageUrl = req.file.path;
     }
     delete req.body.imgFile;
+    console.log(req.body);
+
     const updatedPaca = await pacaService.updatePaca(req.params.id, req.body);
 
     res.status(200).json({

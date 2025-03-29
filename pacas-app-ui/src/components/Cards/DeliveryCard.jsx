@@ -44,15 +44,16 @@ const DeliveryCard = ({
           <p>
             <strong>Tracking Status:</strong> {order.currentTrackingStatus}
           </p>
-          {order.currentTrackingStatus !== TrackingStatus.LOCAL_WAREHOUSE && (
-            <button
-              onClick={() => {
-                onOpenModal(order);
-              }}
-            >
-              Update
-            </button>
-          )}
+          {loggedUser.role === "TRANSPORTER" &&
+            order.currentTrackingStatus !== TrackingStatus.LOCAL_WAREHOUSE && (
+              <button
+                onClick={() => {
+                  onOpenModal(order);
+                }}
+              >
+                Update
+              </button>
+            )}
         </div>
         <div className="order-details">
           <h4>Order Details</h4>

@@ -72,12 +72,13 @@ const PacaCard = ({ loggedUser, paca, styles, onEdit, onDelete, onOrder }) => {
         <p>
           <strong>Quantity:</strong> {paca.quantity}
         </p>
-        {loggedUser.role !== "DISTRIBUTOR" ? (
+        {loggedUser.role !== "DISTRIBUTOR" && (
           <>
             <button onClick={handleEditPaca}>Edit</button>
             <button onClick={handleDeletePaca}>Delete</button>
           </>
-        ) : (
+        )}
+        {loggedUser.role === "DISTRIBUTOR" && paca.status !== "SOLD" && (
           <button
             onClick={handleOrderPaca}
             style={{ backgroundColor: "green", color: "white" }}

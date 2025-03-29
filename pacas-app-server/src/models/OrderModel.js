@@ -27,11 +27,16 @@ class Order {
     });
   }
   async getOrders(offset = 0, limit = 10, provider_id, status) {
+    const validStatus = provider_id
+      ? { status: { not: "DELIVERED" } }
+      : undefined;
+
     return await prisma.order.findMany({
       skip: offset,
       take: limit,
       where: {
-        status: status || undefined,
+        ...validStatus,
+        ...(status && { status }),
         ...(provider_id && {
           Order_Details: {
             some: {
