@@ -11,8 +11,14 @@ const DeliveryManagement = ({ loggedUser }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const fetchDeliveries = async (page = 1, limit = 10) => {
-    const reqUrl = `/${loggedUser.role}/orders/delivered?page=${page}&limit=${limit}&transporter_id=${loggedUser.id}`;
-
+    let reqUrl = `/${loggedUser.role}/orders/delivered?page=${page}&limit=${limit}`;
+    if (loggedUser.role === "TRANSPORTER") {
+      reqUrl += `&transporter_id=${loggedUser.id}`;
+    } else if (loggedUser.role === "PROVIDER") {
+      reqUrl += `&provider_id=${loggedUser.id}`;
+    } else if (loggedUser.role === "DISTRIBUTOR") {
+      reqUrl += `&distributor_id=${loggedUser.id}`;
+    }
     try {
       const data = await fetchApi(reqUrl);
 

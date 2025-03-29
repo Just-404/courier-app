@@ -5,6 +5,7 @@ import addToastMessage from "../../utils/toastMessage";
 import DeliveryCard from "../Cards/DeliveryCard";
 import styles from "../../styles/itemsCard.module.css";
 import TrackingStatusModal from "../Modals/TrackingStatusModal";
+import { Role } from "../../utils/enums";
 
 const DeliveryManagement = ({ loggedUser }) => {
   const [showModal, setShowModal] = useState(false);
@@ -19,7 +20,10 @@ const DeliveryManagement = ({ loggedUser }) => {
   };
 
   const fetchDeliveries = async (page = 1, limit = 10) => {
-    const reqUrl = `/${loggedUser.role}/orders/transporter-orders?page=${page}&limit=${limit}&transporter_id=${loggedUser.id}`;
+    let reqUrl = `/${loggedUser.role}/orders/transporter-orders?page=${page}&limit=${limit}&transporter_id=${loggedUser.id}`;
+    if (loggedUser.role === "DISTRIBUTOR") {
+      reqUrl = `/${loggedUser.role}/orders/orders-tracking?page=${page}&limit=${limit}&distributor_id=${loggedUser.id}`;
+    }
     try {
       const data = await fetchApi(reqUrl);
       setTakenDeliveries(data.orders);
@@ -71,18 +75,19 @@ const DeliveryManagement = ({ loggedUser }) => {
   };
   return (
     <>
-      <div>
-        {" "}
-        <button
-          onClick={() => {
-            setSelectedOrder(null);
-            setShowModal(true);
-          }}
-        >
-          Update all
-        </button>
-      </div>
-
+      {takenDeliveries.length !== 0 && loggedUser.role === Role.TRANSPORTER && (
+        <div>
+          {" "}
+          <button
+            onClick={() => {
+              setSelectedOrder(null);
+              setShowModal(true);
+            }}
+          >
+            Update all
+          </button>
+        </div>
+      )}
       <TrackingStatusModal
         showModal={showModal}
         setShowModal={setShowModal}

@@ -43,13 +43,13 @@ const getOrders = asyncHandler(async (req, res) => {
 
 const getOrdersByStatus = asyncHandler(async (req, res) => {
   try {
-    const { page = 1, limit = 10, status } = req.query;
+    const { page = 1, limit = 10, status, provider_id = null } = req.query;
     const offset = (parseInt(page) - 1) * parseInt(limit);
 
     const orders = await orderService.getOrders(
       offset,
       parseInt(limit),
-      null,
+      provider_id,
       status
     );
 
@@ -61,17 +61,62 @@ const getOrdersByStatus = asyncHandler(async (req, res) => {
   }
 });
 
+const getDistributorTrackingOrders = asyncHandler(async (req, res) => {
+  try {
+    const { page = 1, limit = 10, distributor_id } = req.query;
+    const offset = (parseInt(page) - 1) * parseInt(limit);
+
+    const orders = await trackingService.getDistributorTrackingOrders(
+      offset,
+      parseInt(limit),
+      distributor_id
+    );
+    if (!orders.length) {
+      return res.status(404).json({ error: "No orders found" });
+    }
+    const formattedOrders = orders.map((order) => ({
+      id: order.id,
+      distributor: order.distributor.name,
+      orderStatus: order.status,
+      total_price: order.total_price,
+      createdAt: order.createdAt,
+      totalWeight: order.Order_Details.reduce(
+        (sum, detail) => sum + detail.quantity * detail.paca.weight,
+        0
+      ),
+      currentTrackingStatus: order.Tracking[0]?.status || "No tracking info",
+      timestamp: order.Tracking[0]?.updatedAt,
+    }));
+
+    res.status(200).json({ orders: formattedOrders, total: orders.length });
+  } catch (error) {
+    res
+      .status(400)
+      .json({ error: error.message || "Error getting distributor orders" });
+  }
+});
 const getDeliveredOrders = asyncHandler(async (req, res) => {
   try {
-    const { page = 1, limit = 10, transporter_id } = req.query;
+    const {
+      page = 1,
+      limit = 10,
+      transporter_id,
+      distributor_id,
+      provider_id,
+    } = req.query;
+
     const offset = (parseInt(page) - 1) * parseInt(limit);
+
+    const filter = {};
+    if (transporter_id) filter.transporter_id = transporter_id;
+    if (distributor_id) filter.distributor_id = distributor_id;
+    if (provider_id) filter.provider_id = provider_id;
 
     const orders = await trackingService.getDeliveredOrders(
       offset,
       parseInt(limit),
-      transporter_id
+      filter
     );
-    console.log(orders);
 
     if (!orders.length) {
       return res.status(404).json({ error: "No delivered orders found" });
@@ -87,8 +132,8 @@ const getDeliveredOrders = asyncHandler(async (req, res) => {
         (sum, detail) => sum + detail.quantity * detail.paca.weight,
         0
       ),
-      currentTrackingStatus: order.Tracking[0].status || "No tracking info",
-      timestamp: order.Tracking[0].updatedAt,
+      currentTrackingStatus: order.Tracking[0]?.status || "No tracking info",
+      timestamp: order.Tracking[0]?.updatedAt,
     }));
 
     res.status(200).json({ orders: formattedOrders, total: orders.length });
@@ -113,7 +158,7 @@ const getTransporterOrders = asyncHandler(async (req, res) => {
     if (!orders.length) {
       return res
         .status(404)
-        .json({ error: "No orders found for this transporter" });
+        .json({ error: "No orders taken by this transporter" });
     }
 
     const formattedOrders = orders.map((order) => ({
@@ -355,6 +400,7 @@ module.exports = {
   getOrdersByStatus,
   getTransporterOrders,
   getDeliveredOrders,
+  getDistributorTrackingOrders,
   updateOrderStatus,
   updateTrackingStatus,
   updateMultipleTrackingStatus,

@@ -15,7 +15,7 @@ providerRouter.delete("/pacas/:id", pacaController.deletePaca);
 
 // Orders Received (View orders made for provider's pacas)
 providerRouter.get("/orders", orderController.getOrders);
-// providerRouter.get("/orders/:id", orderController.getOrderById);
+providerRouter.get("/orders/delivered", orderController.getDeliveredOrders);
 providerRouter.put("/orders/:id/status", orderController.updateOrderStatus);
 
 module.exports = providerRouter;

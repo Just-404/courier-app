@@ -7,6 +7,11 @@ const distributorRouter = Router();
 // Orders management
 distributorRouter.post("/orders", orderController.createOrder);
 distributorRouter.get("/orders", orderController.getOrders);
+distributorRouter.get("/orders/delivered", orderController.getDeliveredOrders);
+distributorRouter.get(
+  "/orders/orders-tracking",
+  orderController.getDistributorTrackingOrders
+);
 distributorRouter.get("/orders/:id", orderController.getOrderById);
 distributorRouter.put("/orders/:id/status", orderController.updateOrderStatus);
 

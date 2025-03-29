@@ -26,9 +26,14 @@ const MainContent = ({ user, activeSection }) => {
       {activeSection === UserSection.providerSection[2].title && (
         <OrdersManagement loggedUser={user} />
       )}
+      {activeSection === UserSection.providerSection[3].title && (
+        <OrdersDeliveredManagement loggedUser={user} />
+      )}
       {activeSection === UserSection.distributorSection[1].title &&
         user.role === "DISTRIBUTOR" && <PacasManagement loggedUser={user} />}
-
+      {activeSection === UserSection.distributorSection[3].title && (
+        <DeliveryManagement loggedUser={user} />
+      )}
       {activeSection === UserSection.transporterSection[1].title && (
         <OrdersManagement loggedUser={user} />
       )}
