@@ -5,6 +5,8 @@ import addToastMessage from "../../utils/toastMessage";
 import styles from "../../styles/itemsCard.module.css";
 import PacaModal from "../Modals/PacasModal";
 import PacaCard from "../Cards/PacaCard";
+import Select from "react-select";
+import { PacaStatus } from "../../utils/enums";
 
 const PacasManagement = ({ loggedUser }) => {
   const [pacas, setPacas] = useState([]);
@@ -22,6 +24,7 @@ const PacasManagement = ({ loggedUser }) => {
     img_url: "",
     quantity: 1,
   });
+  const [selectedPacaStatus, setSelectedPacaStatus] = useState(null);
 
   const resetForm = () => {
     setNewPaca({
@@ -37,14 +40,15 @@ const PacasManagement = ({ loggedUser }) => {
   };
 
   useEffect(() => {
-    fetchPacas(currentPage);
-  }, [currentPage]);
+    fetchPacas(currentPage, selectedPacaStatus);
+  }, [currentPage, selectedPacaStatus]);
 
-  const fetchPacas = async (page = 1, limit = 10) => {
+  const fetchPacas = async (page = 1, pacaStatus = "", limit = 10) => {
     let reqUrl = `/${loggedUser.role}/pacas?page=${page}&limit=${limit}`;
     if (loggedUser.role === "PROVIDER")
       reqUrl += `&provider_id=${loggedUser.id}`;
 
+    if (pacaStatus) reqUrl += `&pacaStatus=${pacaStatus}`;
     try {
       const data = await fetchApi(reqUrl);
 
@@ -70,7 +74,7 @@ const PacasManagement = ({ loggedUser }) => {
 
     try {
       await fetchApi("/admin/pacas", "POST", formData, true);
-      fetchPacas(currentPage);
+      fetchPacas(currentPage, selectedPacaStatus);
       setShowModal(false);
       resetForm();
     } catch (error) {
@@ -86,7 +90,7 @@ const PacasManagement = ({ loggedUser }) => {
         "PUT",
         editedPaca
       );
-      fetchPacas(currentPage);
+      fetchPacas(currentPage, selectedPacaStatus);
       callback(true);
     } catch (error) {
       addToastMessage("error", error.message);
@@ -97,7 +101,7 @@ const PacasManagement = ({ loggedUser }) => {
   const handleDeletePaca = async (pacaId) => {
     try {
       await fetchApi(`/${loggedUser.role}/pacas/${pacaId}`, "DELETE");
-      fetchPacas(currentPage);
+      fetchPacas(currentPage, selectedPacaStatus);
     } catch (error) {
       addToastMessage("error", error.message);
     }
@@ -122,11 +126,15 @@ const PacasManagement = ({ loggedUser }) => {
   const handleOrderPaca = async (order) => {
     try {
       await fetchApi(`/${loggedUser.role}/orders`, "POST", order);
-      fetchPacas(currentPage);
+      fetchPacas(currentPage, selectedPacaStatus);
     } catch (error) {
       addToastMessage("error", error.message);
     }
   };
+  const pacaStatusOptions = [
+    { value: PacaStatus.AVAILABLE, label: "Available" },
+    { value: PacaStatus.SOLD, label: "Sold" },
+  ];
   return (
     <>
       {loggedUser.role !== "DISTRIBUTOR" && (
@@ -142,7 +150,19 @@ const PacasManagement = ({ loggedUser }) => {
           </button>
         </div>
       )}
-
+      <div>
+        <Select
+          value={pacaStatusOptions.find(
+            (option) => option.value === selectedPacaStatus
+          )}
+          onChange={(selectedOption) =>
+            setSelectedPacaStatus(selectedOption?.value || "")
+          }
+          options={pacaStatusOptions}
+          placeholder="Select Status"
+          isClearable
+        />
+      </div>
       <PacaModal
         showModal={showModal}
         setShowModal={setShowModal}

@@ -57,6 +57,11 @@ const DeliveryCard = ({
         </div>
         <div className="order-details">
           <h4>Order Details</h4>
+          {loggedUser.role === "DISTRIBUTOR" && (
+            <p>
+              <strong>Paca:</strong> {order.pacaName}
+            </p>
+          )}
           <p>
             <strong>Weight:</strong> {order.totalWeight}
           </p>

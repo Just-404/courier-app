@@ -2,11 +2,16 @@ const e = require("express");
 const pacaModel = require("../models/PacaModel");
 
 class PacaService {
-  async getPacas(offset, limit) {
-    return await pacaModel.getPacas(offset, limit);
+  async getPacas(offset, limit, pacaStatus = null) {
+    return await pacaModel.getPacas(offset, limit, pacaStatus);
   }
-  async getPacasByProvider(providerId, offset, limit) {
-    return await pacaModel.getPacasByProvider(providerId, offset, limit);
+  async getPacasByProvider(providerId, offset, limit, pacaStatus = null) {
+    return await pacaModel.getPacasByProvider(
+      providerId,
+      offset,
+      limit,
+      pacaStatus
+    );
   }
   async getPacaByID(id) {
     return await pacaModel.getPacaByID(id);

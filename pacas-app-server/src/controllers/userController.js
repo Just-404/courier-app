@@ -34,12 +34,12 @@ const signUpRegularUser = asyncHandler(async (req, res, next) => {
 
 const getUsers = asyncHandler(async (req, res, next) => {
   try {
-    const { page = 1, limit = 2 } = req.query;
+    const { page = 1, limit = 2, role } = req.query;
     const offset = (parseInt(page) - 1) * limit;
 
-    const users = await userService.getUsers(offset, parseInt(limit));
+    const users = await userService.getUsers(offset, parseInt(limit), role);
 
-    const totalUsers = await userService.countUsers();
+    const totalUsers = users.length;
 
     res.status(200).json({ users, total: totalUsers });
   } catch (error) {

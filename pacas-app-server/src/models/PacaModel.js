@@ -1,10 +1,12 @@
 const prisma = require("../db/prismaClient").prisma;
 
 class Paca {
-  async getPacas(offset = 0, limit = 10) {
+  async getPacas(offset = 0, limit = 10, pacaStatus) {
     return await prisma.paca.findMany({
-      skip: offset * limit,
+      skip: offset,
       take: limit,
+      where: { ...(pacaStatus && { status: pacaStatus }) },
+      orderBy: { createdAt: "desc" },
     });
   }
 
@@ -14,11 +16,12 @@ class Paca {
     });
   }
 
-  async getPacasByProvider(providerId, offset, limit) {
+  async getPacasByProvider(provider_id, offset, limit, pacaStatus) {
     return await prisma.paca.findMany({
-      where: { provider_id: providerId },
+      where: { provider_id, ...(pacaStatus && { status: pacaStatus }) },
       skip: offset,
       take: limit,
+      orderBy: { createdAt: "desc" },
     });
   }
 

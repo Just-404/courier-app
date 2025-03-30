@@ -5,7 +5,17 @@ import styles from "../../styles/itemsCard.module.css";
 import UserCard from "../Cards/UserCard";
 import Pagination from "../Common/Pagination";
 import UsersModals from "../Modals/UsersModal";
+import Select from "react-select";
+
+const roleOptions = [
+  { value: "ADMIN", label: "Admin" },
+  { value: "PROVIDER", label: "Provider" },
+  { value: "TRANSPORTER", label: "Transporter" },
+  { value: "DISTRIBUTOR", label: "Distributor" },
+];
+
 const UsersManagement = ({ user }) => {
+  const [selectedRole, setSelectedRole] = useState(null);
   const [users, setUsers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [pageCount, setPageCount] = useState(0);
@@ -17,8 +27,8 @@ const UsersManagement = ({ user }) => {
   });
 
   useEffect(() => {
-    fetchUsers(currentPage);
-  }, [currentPage]);
+    fetchUsers(currentPage, selectedRole);
+  }, [currentPage, selectedRole]);
 
   const resetForm = () => {
     setNewUser({
@@ -31,17 +41,18 @@ const UsersManagement = ({ user }) => {
   const addUser = async (newUser) => {
     try {
       await fetchApi("/admin/users/sign-up", "POST", newUser);
-      fetchUsers(currentPage);
+      fetchUsers(currentPage, selectedRole);
       setShowModal(false);
       resetForm();
     } catch (error) {
       addToastMessage("error", error.message);
     }
   };
-  const fetchUsers = async (page = 1, limit = 10) => {
+  const fetchUsers = async (page = 1, role = null, limit = 10) => {
     try {
+      const roleQuery = role ? `&role=${role}` : "";
       const data = await fetchApi(
-        `/${user.role}/users?page=${page}&limit=${limit}`
+        `/${user.role}/users?page=${page}&limit=${limit}${roleQuery}`
       );
       setUsers(data.users);
       setPageCount(Math.ceil(data.total / limit));
@@ -57,7 +68,7 @@ const UsersManagement = ({ user }) => {
         "PUT",
         editedUser
       );
-      fetchUsers(currentPage);
+      fetchUsers(currentPage, selectedRole);
       callback(true);
     } catch (error) {
       addToastMessage("error", error.message);
@@ -68,7 +79,7 @@ const UsersManagement = ({ user }) => {
   const handleDeleteUser = async (userID) => {
     try {
       await fetchApi(`/${user.role}/users/${userID}`, "DELETE");
-      fetchUsers(currentPage);
+      fetchUsers(currentPage, selectedRole);
     } catch (error) {
       addToastMessage("error", error.message);
     }
@@ -77,6 +88,16 @@ const UsersManagement = ({ user }) => {
   return (
     <>
       <div className={styles.addUser}>
+        <label htmlFor="roleFilter">Rol:</label>
+        <Select
+          id="rolFilter"
+          options={roleOptions}
+          onChange={(selectedOption) =>
+            setSelectedRole(selectedOption?.value || null)
+          }
+          isClearable
+          placeholder="Selecciona un rol"
+        />
         <button onClick={() => setShowModal(true)}>+</button>
       </div>
 

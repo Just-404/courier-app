@@ -4,8 +4,8 @@ class UserService {
   async createUser(user) {
     return await userModel.createUser(user);
   }
-  async getUsers(offset, limit) {
-    return await userModel.getUsers(offset, limit);
+  async getUsers(offset, limit, userRole) {
+    return await userModel.getUsers(offset, limit, userRole);
   }
   async getUserByName(name) {
     return await userModel.findByName(name);

@@ -26,7 +26,7 @@ class Order {
       },
     });
   }
-  async getOrders(offset = 0, limit = 10, provider_id, status) {
+  async getOrders(offset = 0, limit = 10, provider_id, status, trackingStatus) {
     const validStatus = provider_id
       ? { status: { not: "DELIVERED" } }
       : undefined;
@@ -44,6 +44,11 @@ class Order {
                 provider_id,
               },
             },
+          },
+        }),
+        ...(trackingStatus && {
+          Tracking: {
+            some: { status: trackingStatus },
           },
         }),
       },

@@ -40,6 +40,7 @@ class Tracking {
       take: limit,
       skip: offset,
       where: whereClause,
+      orderBy: { updatedAt: "desc" },
       select: {
         id: true,
         distributor: { select: { name: true } },
@@ -48,12 +49,12 @@ class Tracking {
         total_price: true,
         Order_Details: {
           select: {
-            paca: { select: { weight: true } },
+            paca: { select: { name: true, weight: true } },
             quantity: true,
           },
         },
         Tracking: {
-          orderBy: { timestamp: "desc" },
+          orderBy: { updatedAt: "desc" },
           take: 1,
           select: {
             status: true,
@@ -64,7 +65,13 @@ class Tracking {
     });
   }
 
-  async getDistributorTrackingOrders(offset, limit, distributor_id) {
+  async getDistributorTrackingOrders(
+    offset,
+    limit,
+    distributor_id,
+    orderStatus,
+    trackingStatus
+  ) {
     return await prisma.order.findMany({
       take: limit,
       skip: offset,
@@ -73,6 +80,12 @@ class Tracking {
         status: {
           not: OrderStatus.DELIVERED,
         },
+        ...(orderStatus && { status: orderStatus }),
+        ...(trackingStatus && {
+          Tracking: {
+            some: { status: trackingStatus },
+          },
+        }),
       },
       select: {
         id: true,
@@ -82,7 +95,7 @@ class Tracking {
         total_price: true,
         Order_Details: {
           select: {
-            paca: { select: { weight: true } },
+            paca: { select: { name: true, weight: true } },
             quantity: true,
           },
         },

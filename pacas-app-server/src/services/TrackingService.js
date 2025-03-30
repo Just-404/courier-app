@@ -9,11 +9,19 @@ class TrackingService {
     return await trackingModel.getDeliveredOrders(offset, limit, filter);
   }
 
-  async getDistributorTrackingOrders(offset, limit, distributorId) {
+  async getDistributorTrackingOrders(
+    offset,
+    limit,
+    distributorId,
+    orderStatus,
+    trackingStatus
+  ) {
     return await trackingModel.getDistributorTrackingOrders(
       offset,
       limit,
-      distributorId
+      distributorId,
+      orderStatus,
+      trackingStatus
     );
   }
   async updateTrackingStatus(orderId, status) {

@@ -8,7 +8,6 @@ const Role = Object.freeze({
 const PacaStatus = Object.freeze({
   AVAILABLE: "AVAILABLE",
   SOLD: "SOLD",
-  ON_TRANSPORT: "ON_TRANSPORT",
 });
 
 const OrderStatus = Object.freeze({
