@@ -15,8 +15,20 @@ class OrderService {
 
     return newOrder;
   }
-  async getOrders(offset, limit, provider_id = null, status = null) {
-    return await orderModel.getOrders(offset, limit, provider_id, status);
+  async getOrders(
+    offset,
+    limit,
+    provider_id = null,
+    status = null,
+    trackingStatus = null
+  ) {
+    return await orderModel.getOrders(
+      offset,
+      limit,
+      provider_id,
+      status,
+      trackingStatus
+    );
   }
   async getOrderById(id) {
     return await orderModel.getOrderById(id);

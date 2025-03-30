@@ -6,7 +6,7 @@ const { Role } = require("../utils/enums");
 
 const getPacas = asyncHandler(async (req, res, next) => {
   try {
-    const { page = 1, limit = 10 } = req.query;
+    const { page = 1, limit = 10, pacaStatus } = req.query;
     const offset = (parseInt(page) - 1) * limit;
 
     let pacas, totalPacas;
@@ -15,11 +15,12 @@ const getPacas = asyncHandler(async (req, res, next) => {
       pacas = await pacaService.getPacasByProvider(
         req.query.provider_id,
         offset,
-        parseInt(limit)
+        parseInt(limit),
+        pacaStatus
       );
       totalPacas = await pacaService.countPacas();
     } else {
-      pacas = await pacaService.getPacas(offset, parseInt(limit));
+      pacas = await pacaService.getPacas(offset, parseInt(limit), pacaStatus);
       totalPacas = await pacaService.countPacas();
     }
 

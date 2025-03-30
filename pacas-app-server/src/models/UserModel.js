@@ -9,10 +9,11 @@ class UserModel {
     });
   }
 
-  async getUsers(offset = 0, limit = 10) {
+  async getUsers(offset = 0, limit = 10, userRole) {
     return await prisma.user.findMany({
       skip: offset,
       take: limit,
+      where: { role: userRole },
       orderBy: [{ role: "asc" }, { name: "asc" }],
     });
   }

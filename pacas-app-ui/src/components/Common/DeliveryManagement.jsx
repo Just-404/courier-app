@@ -5,7 +5,8 @@ import addToastMessage from "../../utils/toastMessage";
 import DeliveryCard from "../Cards/DeliveryCard";
 import styles from "../../styles/itemsCard.module.css";
 import TrackingStatusModal from "../Modals/TrackingStatusModal";
-import { Role } from "../../utils/enums";
+import { Role, OrderStatus, TrackingStatus } from "../../utils/enums";
+import Select from "react-select";
 
 const DeliveryManagement = ({ loggedUser }) => {
   const [showModal, setShowModal] = useState(false);
@@ -13,6 +14,8 @@ const DeliveryManagement = ({ loggedUser }) => {
   const [takenDeliveries, setTakenDeliveries] = useState([]);
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedOrderStatus, setSelectedOrderStatus] = useState(null);
+  const [selectedTrackingStatus, setSelectedTrackingStatus] = useState(null);
 
   const handleOpenModal = (order) => {
     setSelectedOrder(order);
@@ -23,6 +26,13 @@ const DeliveryManagement = ({ loggedUser }) => {
     let reqUrl = `/${loggedUser.role}/orders/transporter-orders?page=${page}&limit=${limit}&transporter_id=${loggedUser.id}`;
     if (loggedUser.role === "DISTRIBUTOR") {
       reqUrl = `/${loggedUser.role}/orders/orders-tracking?page=${page}&limit=${limit}&distributor_id=${loggedUser.id}`;
+    }
+
+    if (selectedOrderStatus) {
+      reqUrl += `&orderStatus=${selectedOrderStatus.value}`;
+    }
+    if (selectedTrackingStatus) {
+      reqUrl += `&trackingStatus=${selectedTrackingStatus.value}`;
     }
     try {
       const data = await fetchApi(reqUrl);
@@ -35,7 +45,7 @@ const DeliveryManagement = ({ loggedUser }) => {
 
   useEffect(() => {
     fetchDeliveries(currentPage);
-  }, [currentPage]);
+  }, [currentPage, selectedOrderStatus, selectedTrackingStatus]);
 
   const returnOrder = async (orderId) => {
     const reqUrl = `/${loggedUser.role}/tracking/return-order`;
@@ -75,6 +85,34 @@ const DeliveryManagement = ({ loggedUser }) => {
   };
   return (
     <>
+      {loggedUser.role === "DISTRIBUTOR" && (
+        <div className={styles.filtersContainer}>
+          <div className={styles.filterItem}>
+            <label>Order Status:</label>
+            <Select
+              options={Object.values(OrderStatus)
+                .filter((status) => status !== OrderStatus.DELIVERED)
+                .map((status) => ({
+                  value: status,
+                  label: status,
+                }))}
+              onChange={setSelectedOrderStatus}
+              isClearable
+            />
+          </div>
+          <div className={styles.filterItem}>
+            <label>Tracking Status:</label>
+            <Select
+              options={Object.values(TrackingStatus).map((status) => ({
+                value: status,
+                label: status,
+              }))}
+              onChange={setSelectedTrackingStatus}
+              isClearable
+            />
+          </div>
+        </div>
+      )}
       {takenDeliveries.length !== 0 && loggedUser.role === Role.TRANSPORTER && (
         <div>
           {" "}

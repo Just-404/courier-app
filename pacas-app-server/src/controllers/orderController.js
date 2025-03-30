@@ -27,13 +27,21 @@ const createOrder = asyncHandler(async (req, res) => {
 
 const getOrders = asyncHandler(async (req, res) => {
   try {
-    const { page = 1, limit = 10, provider_id } = req.query;
+    const {
+      page = 1,
+      limit = 10,
+      provider_id,
+      orderStatus,
+      trackingStatus,
+    } = req.query;
     const offset = (parseInt(page) - 1) * parseInt(limit);
 
     const orders = await orderService.getOrders(
       offset,
       parseInt(limit),
-      provider_id
+      provider_id,
+      orderStatus,
+      trackingStatus
     );
     res.status(200).json({ orders, total: orders.length });
   } catch (error) {
@@ -63,23 +71,33 @@ const getOrdersByStatus = asyncHandler(async (req, res) => {
 
 const getDistributorTrackingOrders = asyncHandler(async (req, res) => {
   try {
-    const { page = 1, limit = 10, distributor_id } = req.query;
+    const {
+      page = 1,
+      limit = 10,
+      distributor_id,
+      orderStatus,
+      trackingStatus,
+    } = req.query;
     const offset = (parseInt(page) - 1) * parseInt(limit);
 
     const orders = await trackingService.getDistributorTrackingOrders(
       offset,
       parseInt(limit),
-      distributor_id
+      distributor_id,
+      orderStatus,
+      trackingStatus
     );
     if (!orders.length) {
       return res.status(404).json({ error: "No orders found" });
     }
+
     const formattedOrders = orders.map((order) => ({
       id: order.id,
       distributor: order.distributor.name,
       orderStatus: order.status,
       total_price: order.total_price,
       createdAt: order.createdAt,
+      pacaName: order.Order_Details[0].paca.name,
       totalWeight: order.Order_Details.reduce(
         (sum, detail) => sum + detail.quantity * detail.paca.weight,
         0
@@ -128,6 +146,7 @@ const getDeliveredOrders = asyncHandler(async (req, res) => {
       orderStatus: order.status,
       total_price: order.total_price,
       createdAt: order.createdAt,
+      pacaName: order.Order_Details[0].paca.name,
       totalWeight: order.Order_Details.reduce(
         (sum, detail) => sum + detail.quantity * detail.paca.weight,
         0
