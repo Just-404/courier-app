@@ -1,4 +1,5 @@
 const { Router } = require("express");
+const userController = require("../controllers/userController");
 const adminRouter = require("../routes/users/adminRouter");
 const providerRouter = require("../routes/users/providerRouter");
 const transporterRouter = require("../routes/users/transporterRouter");
@@ -6,6 +7,9 @@ const distributorRouter = require("../routes/users/distributorRouter");
 const userRouter = Router();
 
 const { Role } = require("../utils/enums");
+
+userRouter.put("/profile/change-password/", userController.updateUserPassword);
+userRouter.put("/profile/change-name/:id", userController.updateUserName);
 
 userRouter.use((req, res, next) => {
   switch (req.user.role) {

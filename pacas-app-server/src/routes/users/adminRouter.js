@@ -11,7 +11,8 @@ adminRouter.use(userAuth.isAdmin);
 //Users management
 adminRouter.get("/users", userController.getUsers);
 adminRouter.post("/users/sign-up", adminController.signUpForAdmin);
-adminRouter.put("/users/:id", userController.updateUser);
+adminRouter.put("/profile/change-password", userController.updateUserPassword);
+adminRouter.put("/users/:id", userController.updateUserName);
 adminRouter.delete("/users/:id", userController.deleteUser);
 
 // Orders management

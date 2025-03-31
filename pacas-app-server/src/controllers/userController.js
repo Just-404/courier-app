@@ -72,9 +72,12 @@ const getUserByName = asyncHandler(async (req, res) => {
   }
 });
 
-const updateUser = asyncHandler(async (req, res) => {
+const updateUserName = asyncHandler(async (req, res) => {
   try {
-    const updatedUser = await userService.updateUser(req.params.id, req.body);
+    const { name } = req.body;
+
+    const updatedUser = await userService.updateUser(req.params.id, { name });
+    delete updatedUser.password;
     res.status(200).json({ msg: "User updated successfully!", updatedUser });
   } catch (error) {
     if (error.code === "P2002") {
@@ -84,6 +87,39 @@ const updateUser = asyncHandler(async (req, res) => {
         .json({ error: `This ${fieldError} already exists!` });
     }
     res.status(400).json({ error: error.message || "Error updating user" });
+  }
+});
+
+const updateUserPassword = asyncHandler(async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { oldPassword, newPassword } = req.body;
+
+    if (!oldPassword || !newPassword) {
+      return res
+        .status(400)
+        .json({ error: "Both old and new passwords are required." });
+    }
+
+    const user = await userService.getUserById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found. Wrong ID" });
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ error: "Incorrect old password." });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await userService.updateUser(userId, { password: hashedPassword });
+
+    res.json({ msg: "Password updated successfully!" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: error.message || "Failed to update password" });
   }
 });
 
@@ -105,6 +141,7 @@ module.exports = {
   getUsers,
   getUserById,
   getUserByName,
-  updateUser,
+  updateUserName,
+  updateUserPassword,
   deleteUser,
 };
