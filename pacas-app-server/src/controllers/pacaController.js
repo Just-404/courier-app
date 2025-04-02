@@ -97,8 +97,6 @@ const updatePaca = asyncHandler(async (req, res) => {
       imageUrl = req.file.path;
     }
     delete req.body.imgFile;
-    console.log(req.body);
-
     const updatedPaca = await pacaService.updatePaca(req.params.id, req.body);
 
     res.status(200).json({

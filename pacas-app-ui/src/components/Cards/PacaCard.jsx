@@ -47,20 +47,29 @@ const PacaCard = ({ loggedUser, paca, styles, onEdit, onDelete, onOrder }) => {
   };
 
   return (
-    <div className={styles.card}>
+    <div className={styles.pacaCard}>
       <div className={styles.cardHeader}>
-        <div className="cardImg">
+        <div className={styles.cardImg}>
           <img src={paca.img_url || null} alt={paca.name} />
         </div>
 
         <div>
           <h3>{paca.name}</h3>
-          <p>Status: {paca.status}</p>
+          <p>
+            Status:{" "}
+            <span
+              className={
+                paca.status === "AVAILABLE" ? styles.available : styles.sold
+              }
+            >
+              {paca.status}
+            </span>
+          </p>
         </div>
       </div>
 
       <div className={styles.cardBody}>
-        <p>
+        <p className={styles.pacaDescription}>
           <strong>Description:</strong> {paca.description}
         </p>
         <p>
@@ -73,10 +82,10 @@ const PacaCard = ({ loggedUser, paca, styles, onEdit, onDelete, onOrder }) => {
           <strong>Quantity:</strong> {paca.quantity}
         </p>
         {loggedUser.role !== "DISTRIBUTOR" && (
-          <>
+          <div className={styles.pacaBtnsBox}>
             <button onClick={handleEditPaca}>Edit</button>
             <button onClick={handleDeletePaca}>Delete</button>
-          </>
+          </div>
         )}
         {loggedUser.role === "DISTRIBUTOR" && paca.status !== "SOLD" && (
           <button

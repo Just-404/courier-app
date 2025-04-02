@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-import styles from "../../styles/itemsCard.module.css";
+import styles from "../../styles/modals.module.css";
 import { PacaStatus } from "../../utils/enums";
 
 const PacaModal = ({ showModal, setShowModal, newPaca, onSubmit }) => {
@@ -46,89 +46,113 @@ const PacaModal = ({ showModal, setShowModal, newPaca, onSubmit }) => {
   if (!showModal) return null;
 
   return (
-    <dialog ref={dialogRef} className={styles.addUserModal}>
-      <h2>{newPaca.id ? "Edit" : "Create"} Paca:</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
-          <input
-            type="text"
-            name="name"
-            placeholder="Name"
-            value={localPaca.name}
-            onChange={handleChange}
-            required
-          />
-        </label>
+    <dialog ref={dialogRef} className={`${styles.modal}  ${styles.pacaModal}`}>
+      <div className={styles.pacaContainer}>
+        <h2>{newPaca.id ? "Edit" : "Create"} Paca:</h2>
+        <form onSubmit={handleSubmit} className={styles.pacaForm}>
+          <div className={styles.inputBox}>
+            <label htmlFor="name">Name:</label>
+            <input
+              id="name"
+              type="text"
+              name="name"
+              placeholder="Name"
+              value={localPaca.name}
+              onChange={handleChange}
+              required
+              autoComplete="off"
+              maxLength="25"
+            />
+          </div>
+          <div className={styles.inputBox}>
+            <label htmlFor="desc">Description:</label>
+            <textarea
+              id="desc"
+              name="description"
+              placeholder="Description"
+              value={localPaca.description}
+              onChange={handleChange}
+              required
+              maxLength="200"
+            />
+          </div>
 
-        <label>
-          <textarea
-            name="description"
-            placeholder="Description"
-            value={localPaca.description}
-            onChange={handleChange}
-            required
-          />
-        </label>
+          <div className={styles.inputBox}>
+            <label htmlFor="weight">Weight:</label>
+            <input
+              id="weight"
+              type="number"
+              name="weight"
+              placeholder="Weight (kg)"
+              step="0.01"
+              min="0.01"
+              max="100"
+              value={localPaca.weight}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className={styles.inputBox}>
+            <label htmlFor="price">Price:</label>
+            <input
+              id="price"
+              type="number"
+              name="price"
+              placeholder="Price ($)"
+              step="50"
+              min="0"
+              value={localPaca.price}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className={styles.inputBox}>
+            <label htmlFor="quantity">Quantity: </label>
+            <input
+              id="quantity"
+              type="number"
+              name="quantity"
+              placeholder="Quantity"
+              min="0"
+              value={localPaca.quantity}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className={styles.inputBox}>
+            <label htmlFor="status">Status:</label>
+            <select
+              id="status"
+              name="status"
+              value={localPaca.status}
+              onChange={handleChange}
+            >
+              <option value={PacaStatus.AVAILABLE}>Available</option>
+            </select>
+          </div>
+          <div className={styles.uploadImg}>
+            <div>
+              <label htmlFor="uploadImg">Upload Image:</label>
+              <input
+                id="uploadImg"
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+              />
+            </div>
+            {previewImage && (
+              <img src={previewImage} alt="Paca preview" width="100" />
+            )}
+          </div>
 
-        <label>
-          <input
-            type="number"
-            name="weight"
-            placeholder="Weight (kg)"
-            step="0.01"
-            value={localPaca.weight}
-            onChange={handleChange}
-            required
-          />
-        </label>
-
-        <label>
-          <input
-            type="number"
-            name="price"
-            placeholder="Price ($)"
-            step="0.01"
-            value={localPaca.price}
-            onChange={handleChange}
-            required
-          />
-        </label>
-
-        <label>
-          <input
-            type="number"
-            name="quantity"
-            placeholder="Quantity"
-            min="1"
-            value={localPaca.quantity}
-            onChange={handleChange}
-            required
-          />
-        </label>
-
-        <label>
-          Upload Image:
-          <input type="file" accept="image/*" onChange={handleFileChange} />
-          {previewImage && (
-            <img src={previewImage} alt="Paca preview" width="100" />
-          )}
-        </label>
-
-        <label>
-          <select
-            name="status"
-            value={localPaca.status}
-            onChange={handleChange}
-          >
-            <option value={PacaStatus.AVAILABLE}>Available</option>
-          </select>
-        </label>
-
-        <button type="submit">{newPaca.id ? "Edit" : "Create"}</button>
-        <button type="button" onClick={() => setShowModal(false)}>
-          Cancel
-        </button>
-      </form>
+          <div className={styles.btnsBox}>
+            <button type="submit">{newPaca.id ? "Edit" : "Create"}</button>
+            <button type="button" onClick={() => setShowModal(false)}>
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
     </dialog>
   );
 };

@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-import styles from "../../styles/itemsCard.module.css";
+import styles from "../../styles/modals.module.css";
 import addToastMessage from "../../utils/toastMessage";
 
 const TrackingStatusModal = ({

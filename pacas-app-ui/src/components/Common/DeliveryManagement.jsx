@@ -4,6 +4,7 @@ import fetchApi from "../../utils/fetchApi";
 import addToastMessage from "../../utils/toastMessage";
 import DeliveryCard from "../Cards/DeliveryCard";
 import styles from "../../styles/itemsCard.module.css";
+import filterStyles from "../../styles/filterSection.module.css";
 import TrackingStatusModal from "../Modals/TrackingStatusModal";
 import { Role, OrderStatus, TrackingStatus } from "../../utils/enums";
 import Select from "react-select";
@@ -83,13 +84,25 @@ const DeliveryManagement = ({ loggedUser }) => {
       addToastMessage("error", error.message);
     }
   };
+  const cancelOrder = async (orderId) => {
+    try {
+      await fetchApi(
+        `/${loggedUser.role}/orders/${orderId}/cancel-order`,
+        "PUT"
+      );
+      fetchDeliveries(currentPage);
+    } catch (error) {
+      addToastMessage("error", error.message);
+    }
+  };
   return (
     <>
       {loggedUser.role === "DISTRIBUTOR" && (
-        <div className={styles.filtersContainer}>
-          <div className={styles.filterItem}>
+        <div className={filterStyles.filterContainer}>
+          <div className={filterStyles.filterItem}>
             <label>Order Status:</label>
             <Select
+              className={filterStyles.select}
               options={Object.values(OrderStatus)
                 .filter((status) => status !== OrderStatus.DELIVERED)
                 .map((status) => ({
@@ -100,9 +113,10 @@ const DeliveryManagement = ({ loggedUser }) => {
               isClearable
             />
           </div>
-          <div className={styles.filterItem}>
+          <div className={filterStyles.filterItem}>
             <label>Tracking Status:</label>
             <Select
+              className={filterStyles.select}
               options={Object.values(TrackingStatus).map((status) => ({
                 value: status,
                 label: status,
@@ -154,6 +168,7 @@ const DeliveryManagement = ({ loggedUser }) => {
             styles={styles}
             key={delivery.id}
             loggedUser={loggedUser}
+            onCancel={cancelOrder}
             onReturnOrder={returnOrder}
             onUpdateTrackingStatus={updateTrackingStatus}
           />

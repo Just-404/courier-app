@@ -58,15 +58,31 @@ const OrderCard = ({
         <div>
           <h3>Order ID: {order.id.slice(0, 8)}...</h3>
 
-          <div>
-            <p>Status: {order.status}</p>
+          <div className={styles.orderSubHeader}>
+            <p>
+              <strong>
+                <i>Status:</i>
+              </strong>{" "}
+              <span
+                style={{
+                  color: order.status === OrderStatus.DELIVERED && "green",
+                }}
+              >
+                {order.status}
+              </span>
+            </p>
             {loggedUser.role === Role.ADMIN &&
               (order.status === "READY" || order.status === "PENDING") && (
                 <button onClick={toggleStatus}>Toggle</button>
               )}
 
             {order.status === OrderStatus.DELIVERED && (
-              <p>Delivered on: {new Date(order.updatedAt).toLocaleString()}</p>
+              <p>
+                <strong>
+                  <i>Delivered on:</i>
+                </strong>{" "}
+                {new Date(order.updatedAt).toLocaleString()}
+              </p>
             )}
           </div>
         </div>
@@ -87,11 +103,10 @@ const OrderCard = ({
           {new Date(order.createdAt).toLocaleDateString()}
         </p>
         <p>
-          <strong>Tracking Status:</strong> {order.Tracking[0].status}
+          <strong>Track Status:</strong> {order.Tracking[0].status}
         </p>
 
         <div className="order-details">
-          <h4>Order Details</h4>
           {order.Order_Details.map((detail, index) => (
             <div key={index}>
               <p>
@@ -101,7 +116,7 @@ const OrderCard = ({
                 <strong>Quantity:</strong> {detail.quantity}
               </p>
               <p>
-                <strong>Total Weight:</strong>
+                <strong>Total Weight: </strong>
                 {detail.quantity * detail.paca.weight}
               </p>
             </div>
@@ -110,10 +125,10 @@ const OrderCard = ({
 
         {loggedUser.role === Role.ADMIN &&
           order.Tracking[0].status === TrackingStatus.ORIGIN_WAREHOUSE && (
-            <>
+            <div className={styles.ordersBtnBox}>
               <button onClick={handleCancelOrder}>Cancel Order</button>
               <button onClick={handleDeleteOrder}>Delete</button>
-            </>
+            </div>
           )}
         {loggedUser.role === Role.ADMIN &&
           order.status === OrderStatus.ON_WAREHOUSE && (

@@ -369,7 +369,9 @@ const cancelOrder = asyncHandler(async (req, res) => {
       return res.status(400).json({ error: "Order is already cancelled" });
     }
 
-    const updatedOrder = await orderService.updateOrderStatus(id, "CANCELLED");
+    const updatedOrder = await orderService.updateOrder(id, {
+      status: "CANCELLED",
+    });
     res
       .status(200)
       .json({ msg: "Order cancelled successfully", order: updatedOrder });

@@ -3,6 +3,7 @@ import Pagination from "./Pagination";
 import fetchApi from "../../utils/fetchApi";
 import addToastMessage from "../../utils/toastMessage";
 import styles from "../../styles/itemsCard.module.css";
+import filterStyles from "../../styles/filterSection.module.css";
 import PacaModal from "../Modals/PacasModal";
 import PacaCard from "../Cards/PacaCard";
 import Select from "react-select";
@@ -137,21 +138,10 @@ const PacasManagement = ({ loggedUser }) => {
   ];
   return (
     <>
-      {loggedUser.role !== "DISTRIBUTOR" && (
-        <div className={styles.addUser}>
-          <button
-            onClick={() => {
-              resetForm();
-              setEditingPaca(null);
-              setShowModal(true);
-            }}
-          >
-            +
-          </button>
-        </div>
-      )}
-      <div>
+      <div className={filterStyles.filterContainer}>
+        <label>Paca Status: </label>
         <Select
+          className={filterStyles.select}
           value={pacaStatusOptions.find(
             (option) => option.value === selectedPacaStatus
           )}
@@ -162,6 +152,17 @@ const PacasManagement = ({ loggedUser }) => {
           placeholder="Select Status"
           isClearable
         />
+        {loggedUser.role !== "DISTRIBUTOR" && (
+          <button
+            onClick={() => {
+              resetForm();
+              setEditingPaca(null);
+              setShowModal(true);
+            }}
+          >
+            +
+          </button>
+        )}
       </div>
       <PacaModal
         showModal={showModal}

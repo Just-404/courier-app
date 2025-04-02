@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import fetchApi from "../../utils/fetchApi";
 import addToastMessage from "../../utils/toastMessage";
 import styles from "../../styles/itemsCard.module.css";
+import filterStyles from "../../styles/filterSection.module.css";
 import UserCard from "../Cards/UserCard";
 import Pagination from "../Common/Pagination";
 import UsersModals from "../Modals/UsersModal";
@@ -87,7 +88,7 @@ const UsersManagement = ({ user }) => {
 
   return (
     <>
-      <div className={styles.addUser}>
+      <div className={filterStyles.filterContainer}>
         <label htmlFor="roleFilter">Rol:</label>
         <Select
           id="rolFilter"

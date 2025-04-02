@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import userIcon from "../../assets/user.png";
 import addToastMessage from "../../utils/toastMessage";
+import modalStyles from "../../styles/modals.module.css";
 
 const UserCard = ({ user, styles, onEdit, onDelete }) => {
   const dialogRef = useRef(null);
@@ -51,7 +52,7 @@ const UserCard = ({ user, styles, onEdit, onDelete }) => {
   return (
     <div className={styles.card}>
       <div className={styles.cardHeader}>
-        <div className="cardImg">
+        <div className={styles.userCardIcon}>
           <img src={userIcon} alt="user-img" />
         </div>
 
@@ -60,16 +61,16 @@ const UserCard = ({ user, styles, onEdit, onDelete }) => {
           <h4>{user.role}</h4>
         </div>
       </div>
-      <div className={styles.cardBody}>
+      <div className={styles.userBtnBox}>
         <button onClick={handleEditUser}>Edit name</button>
         <button onClick={handleDeleteUser}>Delete</button>
         <button onClick={openModal}>...</button>
       </div>
 
-      <dialog ref={dialogRef} className={styles.modal}>
-        <div className={styles.cardMoreUserInfo}>
-          <p>Registered on: {user.createdAt}</p>
-          <p>Modified on: {user.updatedAt}</p>
+      <dialog ref={dialogRef} className={modalStyles.modal}>
+        <div className={modalStyles.cardMoreUserInfo}>
+          <p>Registered on: {new Date(user.createdAt).toLocaleString()}</p>
+          <p>Modified on: {new Date(user.updatedAt).toLocaleString()}</p>
         </div>
         <button onClick={closeModal}>Close</button>
       </dialog>

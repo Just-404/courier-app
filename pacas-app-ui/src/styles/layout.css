@@ -6,7 +6,7 @@
 .parent-container {
   height: 100dvb;
   display: grid;
-  grid-template-columns: 250px 1fr;
+  grid-template-columns: 258px 1fr;
   grid-template-rows: 50px 1fr;
   grid-column-gap: 0px;
   grid-row-gap: 0px;
@@ -52,7 +52,8 @@ aside {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 50px 1fr 50px;
-  grid-row-gap: 1rem;
+  grid-row-gap: 1.5rem;
+  align-items: start;
 }
 
 aside h1 {
@@ -66,10 +67,8 @@ aside h1 {
 }
 
 .sidebar-body ul li {
-  width: 12rem;
   list-style: none;
   display: flex;
-
   gap: 1rem;
 }
 
@@ -84,7 +83,6 @@ aside h1 {
 }
 .parent-container button {
   background-color: aliceblue;
-  color: #000;
   border-radius: 0;
   border: 1px solid transparent;
   padding: 5px 1em;

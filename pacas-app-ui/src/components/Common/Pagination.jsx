@@ -7,7 +7,9 @@ const Pagination = ({ data, onPageCount, pageCount, renderItem }) => {
     onPageCount(newPage);
   };
   return !data || data.length === 0 ? (
-    <div>Nothing to show here</div>
+    <div style={{ height: "50%", textAlign: "center", fontSize: "20px" }}>
+      Nothing was found
+    </div>
   ) : (
     <>
       <div className={styles.itemsContainer}>

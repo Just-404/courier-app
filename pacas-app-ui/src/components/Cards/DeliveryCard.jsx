@@ -1,10 +1,12 @@
 import { TrackingStatus, OrderStatus, Role } from "../../utils/enums";
+import addToastMessage from "../../utils/toastMessage";
 const DeliveryCard = ({
   onOpenModal,
   loggedUser,
   order,
   styles,
   onReturnOrder,
+  onCancel,
 }) => {
   const handleReturnOrder = () => {
     const confirmation = confirm(
@@ -14,21 +16,38 @@ const DeliveryCard = ({
       onReturnOrder(order.id);
     }
   };
+  const handleCancelOrder = () => {
+    const result = confirm("Are you sure you want to cancel this order?");
+    if (!result) {
+      addToastMessage("warning", "Order cancellation cancelled!");
+      return;
+    }
+
+    onCancel(order.id);
+  };
 
   return (
     <div className={styles.card}>
-      <div className={styles.cardHeader}>
-        <div>
-          <h3>Order ID: {order.id.slice(0, 8)}...</h3>
+      <div className={styles.deliveryCardHeader}>
+        <h3>Order ID: {order.id.slice(0, 8)}...</h3>
 
-          <div>
-            <p>Status: {order.orderStatus}</p>
-            {loggedUser.role === Role.TRANSPORTER &&
-              order.currentTrackingStatus ===
-                TrackingStatus.ORIGIN_WAREHOUSE && (
-                <button onClick={handleReturnOrder}>Return</button>
-              )}
-          </div>
+        <div className={styles.deliverySubHeader}>
+          <p>
+            <strong>
+              <i>Status:</i>
+            </strong>{" "}
+            <span
+              style={{
+                color: order.orderStatus === OrderStatus.DELIVERED && "green",
+              }}
+            >
+              <strong>{order.orderStatus}</strong>
+            </span>
+          </p>
+          {loggedUser.role === Role.TRANSPORTER &&
+            order.currentTrackingStatus === TrackingStatus.ORIGIN_WAREHOUSE && (
+              <button onClick={handleReturnOrder}>Return</button>
+            )}
         </div>
       </div>
 
@@ -56,7 +75,6 @@ const DeliveryCard = ({
             )}
         </div>
         <div className="order-details">
-          <h4>Order Details</h4>
           {loggedUser.role === "DISTRIBUTOR" && (
             <p>
               <strong>Paca:</strong> {order.pacaName}
@@ -71,6 +89,13 @@ const DeliveryCard = ({
           </p>
         </div>
       </div>
+      {loggedUser.role === Role.DISTRIBUTOR &&
+        order.currentTrackingStatus === TrackingStatus.ORIGIN_WAREHOUSE &&
+        order.orderStatus !== OrderStatus.CANCELLED && (
+          <div className={styles.ordersBtnBox}>
+            <button onClick={handleCancelOrder}>Cancel Order</button>
+          </div>
+        )}
     </div>
   );
 };

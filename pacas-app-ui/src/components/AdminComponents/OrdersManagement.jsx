@@ -4,6 +4,7 @@ import fetchApi from "../../utils/fetchApi";
 import addToastMessage from "../../utils/toastMessage";
 import OrderCard from "../Cards/OrderCard";
 import styles from "../../styles/itemsCard.module.css";
+import filterStyles from "../../styles/filterSection.module.css";
 import { OrderStatus, TrackingStatus } from "../../utils/enums";
 import Select from "react-select";
 
@@ -84,10 +85,11 @@ const OrdersManagement = ({ loggedUser }) => {
   return (
     <>
       {loggedUser.role !== "TRANSPORTER" && (
-        <div className={styles.filtersContainer}>
-          <div className={styles.filterItem}>
+        <div className={filterStyles.filterContainer}>
+          <div className={filterStyles.filterItem}>
             <label>Order Status:</label>
             <Select
+              className={filterStyles.select}
               options={Object.values(OrderStatus)
                 .filter((status) =>
                   loggedUser.role === "PROVIDER"
@@ -102,9 +104,10 @@ const OrdersManagement = ({ loggedUser }) => {
               isClearable
             />
           </div>
-          <div className={styles.filterItem}>
+          <div className={filterStyles.filterItem}>
             <label>Tracking Status:</label>
             <Select
+              className={filterStyles.select}
               options={Object.values(TrackingStatus).map((status) => ({
                 value: status,
                 label: status,

@@ -13,6 +13,7 @@ distributorRouter.get(
   orderController.getDistributorTrackingOrders
 );
 distributorRouter.get("/orders/:id", orderController.getOrderById);
+distributorRouter.put("/orders/:id/cancel-order", orderController.cancelOrder);
 distributorRouter.put("/orders/:id/status", orderController.updateOrderStatus);
 
 //Pacas management

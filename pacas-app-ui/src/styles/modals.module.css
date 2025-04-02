@@ -1,0 +1,109 @@
+.modal {
+  min-width: 400px;
+  overflow: hidden;
+  width: max-content;
+  padding: 20px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.pacaModal {
+  height: 35rem;
+  min-width: 500px;
+  overflow-y: scroll;
+  padding: 2rem;
+}
+
+.modal::backdrop {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.userForm,
+.pacaForm {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.userForm select,
+.pacaForm select {
+  width: 200px;
+  height: 40px;
+  padding: 0;
+  border-bottom: 2px solid black;
+}
+
+.inputBox,
+.uploadImg {
+  display: flex;
+  justify-content: space-between;
+}
+.inputBox label,
+.uploadImg label {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+.inputBox input {
+  padding: 5px;
+  outline: none;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  min-width: 250px;
+  font-size: 18px;
+}
+
+.inputBox textarea {
+  min-height: 120px;
+  max-height: 300px;
+  min-width: 250px;
+  padding: 5px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: vertical;
+  transition: border-color 0.3s ease-in-out;
+}
+
+.inputBox textarea:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+.inputBox textarea::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.uploadImg > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.btnsBox {
+  display: flex;
+  gap: 1rem;
+}
+.pacaContainer {
+  height: 100%;
+  display: grid;
+  grid-template-rows: repeat(3, 50px);
+  padding: 0.5rem;
+  border: none;
+}
+
+.cardMoreUserInfo {
+  display: block;
+  position: relative;
+  margin-left: 10px;
+  padding: 10px;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
