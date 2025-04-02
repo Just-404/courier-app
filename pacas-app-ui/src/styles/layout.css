@@ -63,7 +63,7 @@ aside h1 {
 .sidebar-body ul {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 10px;
 }
 
 .sidebar-body ul li {
